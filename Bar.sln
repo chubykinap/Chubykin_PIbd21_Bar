@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary1", "ClassLibrary1\ClassLibrary1.csproj", "{BCAE429A-6925-4DEF-919D-ACA0000275B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarModel", "BarModel\BarModel.csproj", "{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarService", "BarService\BarService.csproj", "{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarView", "D:\учеба\Учёба\ООП\2 семестр\Bar_lab10\FabrikaView\BarView.csproj", "{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BCAE429A-6925-4DEF-919D-ACA0000275B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCAE429A-6925-4DEF-919D-ACA0000275B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCAE429A-6925-4DEF-919D-ACA0000275B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCAE429A-6925-4DEF-919D-ACA0000275B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
