@@ -542,7 +542,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=Fields!Sum.Value</Value>
+                <Value>=Sum(Fields!Sum.Value, "DataSetOrders")</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -554,6 +554,8 @@
         <rd:DefaultName>Textbox6</rd:DefaultName>
         <Top>4.16264cm</Top>
         <Left>13.86887cm</Left>
+        <Top>4.09208cm</Top>
+        <Left>13.32493cm</Left>
         <Height>0.68792cm</Height>
         <Width>2.29274cm</Width>
         <ZIndex>4</ZIndex>
