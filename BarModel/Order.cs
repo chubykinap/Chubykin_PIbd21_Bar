@@ -13,6 +13,9 @@ namespace BarModel
         public OrderStatus Status { get; set; }
         public DateTime DateCreate { get; set; }
         public DateTime? DateImplement { get; set; }
+        public virtual Customer Customer { set; get; }
+        public virtual Cocktail Cocktail { set; get; }
+        public Executor Executor { set; get; }
     }
 
     public enum OrderStatus
