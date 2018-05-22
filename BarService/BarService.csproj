@@ -30,7 +30,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,6 +49,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BarDBContext.cs" />
+    <Compile Include="BDImplementation\CocktailBD.cs" />
+    <Compile Include="BDImplementation\CustomerBD.cs" />
+    <Compile Include="BDImplementation\ElementBD.cs" />
+    <Compile Include="BDImplementation\ExecutorBD.cs" />
+    <Compile Include="BDImplementation\MainBD.cs" />
+    <Compile Include="BDImplementation\StorageBD.cs" />
     <Compile Include="BindingModels\CocktailBindModel.cs" />
     <Compile Include="BindingModels\CustomerBindModel.cs" />
     <Compile Include="BindingModels\ElementBindModel.cs" />
@@ -55,6 +71,11 @@
     <Compile Include="Interfaces\IExecutor.cs" />
     <Compile Include="Interfaces\IMainService.cs" />
     <Compile Include="Interfaces\IStorage.cs" />
+    <Compile Include="Migrations\201805220948204_FirstMigration.cs" />
+    <Compile Include="Migrations\201805220948204_FirstMigration.Designer.cs">
+      <DependentUpon>201805220948204_FirstMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServicesList\CocktailList.cs" />
     <Compile Include="ServicesList\CustomerList.cs" />
@@ -71,12 +92,20 @@
     <Compile Include="ViewModel\OrderViewModel.cs" />
     <Compile Include="ViewModel\StorageViewModel.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BarModel\BarModel.csproj">
       <Project>{4017c3b2-4a3e-434c-be10-dddb9b7e1d1f}</Project>
       <Name>BarModel</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201805220948204_FirstMigration.resx">
+      <DependentUpon>201805220948204_FirstMigration.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
