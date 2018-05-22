@@ -1,9 +1,10 @@
 ﻿using BarService.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using BarService.BindingModels;
 using BarService.ViewModel;
 using BarModel;
-using BarService.BindingModels;
 
 namespace BarService.ServicesList
 {
@@ -16,147 +17,88 @@ namespace BarService.ServicesList
             source = DataListSingleton.GetInstance();
         }
 
-        public List<StorageViewModel> GetList()
-        {
-            List<StorageViewModel> result = new List<StorageViewModel>();
-            for (int i = 0; i < source.Storages.Count; ++i)
-            {
-                List<ElementStorageViewModel> ElementStorages = new List<ElementStorageViewModel>();
-                for (int j = 0; j < source.ElementStorages.Count; ++j)
-                {
-                    if (source.ElementStorages[j].StorageID == source.Storages[i].Id)
-                    {
-                        string ElementName = string.Empty;
-                        for (int k = 0; k < source.Elements.Count; ++k)
-                        {
-                            if (source.ElementRequirements[j].ElementID == source.Elements[k].ID)
-                            {
-                                ElementName = source.Elements[k].ElementName;
-                                break;
-                            }
-                        }
-                        ElementStorages.Add(new ElementStorageViewModel
-                        {
-                            ID = source.ElementStorages[j].ID,
-                            StorageID = source.ElementStorages[j].StorageID,
-                            ElementID = source.ElementStorages[j].ElementID,
-                            ElementName = ElementName,
-                            Count = source.ElementStorages[j].Count
-                        });
-                    }
-                }
-                result.Add(new StorageViewModel
-                {
-                    ID = source.Storages[i].Id,
-                    StorageName = source.Storages[i].StorageName,
-                    StorageElements = ElementStorages
-                });
-            }
-            return result;
-        }
-
-        public StorageViewModel GetElement(int id)
-        {
-            for (int i = 0; i < source.Storages.Count; ++i)
-            {
-                List<ElementStorageViewModel> ElementStorages = new List<ElementStorageViewModel>();
-                for (int j = 0; j < source.ElementStorages.Count; ++j)
-                {
-                    if (source.ElementStorages[j].StorageID == source.Storages[i].Id)
-                    {
-                        string ElementName = string.Empty;
-                        for (int k = 0; k < source.Elements.Count; ++k)
-                        {
-                            if (source.ElementRequirements[j].ElementID == source.Elements[k].ID)
-                            {
-                                ElementName = source.Elements[k].ElementName;
-                                break;
-                            }
-                        }
-                        ElementStorages.Add(new ElementStorageViewModel
-                        {
-                            ID = source.ElementStorages[j].ID,
-                            StorageID = source.ElementStorages[j].StorageID,
-                            ElementID = source.ElementStorages[j].ElementID,
-                            ElementName = ElementName,
-                            Count = source.ElementStorages[j].Count
-                        });
-                    }
-                }
-                if (source.Storages[i].Id == id)
-                {
-                    return new StorageViewModel
-                    {
-                        ID = source.Storages[i].Id,
-                        StorageName = source.Storages[i].StorageName,
-                        StorageElements = ElementStorages
-                    };
-                }
-            }
-            throw new Exception("Элемент не найден");
-        }
-
         public void AddElement(StorageBindModel model)
         {
-            int maxId = 0;
-            for (int i = 0; i < source.Storages.Count; ++i)
+            Storage elem = source.Storages.FirstOrDefault(storage => storage.StorageName == model.StorageName);
+            if (elem != null)
             {
-                if (source.Storages[i].Id > maxId)
-                {
-                    maxId = source.Storages[i].Id;
-                }
-                if (source.Storages[i].StorageName == model.StorageName)
-                {
-                    throw new Exception("Уже есть склад с таким названием");
-                }
+                throw new Exception("Уже есть склад с таким названием");
             }
+            int maxId = source.Storages.Count > 0 ? source.Storages.Max(storage => storage.ID) : 0;
             source.Storages.Add(new Storage
             {
-                Id = maxId + 1,
+                ID = maxId + 1,
                 StorageName = model.StorageName
             });
         }
 
-        public void UpdElement(StorageBindModel model)
+        public void DelElement(int id)
         {
-            int index = -1;
-            for (int i = 0; i < source.Storages.Count; ++i)
+            Storage element = source.Storages.FirstOrDefault(storage => storage.ID == id);
+            if (element != null)
             {
-                if (source.Storages[i].Id == model.ID)
-                {
-                    index = i;
-                }
-                if (source.Storages[i].StorageName == model.StorageName &&
-                    source.Storages[i].Id != model.ID)
-                {
-                    throw new Exception("Уже есть склад с таким названием");
-                }
+                source.ElementStorages.RemoveAll(storage => storage.StorageID == id);
+                source.Storages.Remove(element);
             }
-            if (index == -1)
+            else
             {
                 throw new Exception("Элемент не найден");
             }
-            source.Storages[index].StorageName = model.StorageName;
         }
 
-        public void DelElement(int id)
+        public StorageViewModel GetElement(int id)
         {
-            for (int i = 0; i < source.ElementStorages.Count; ++i)
+            Storage element = source.Storages.FirstOrDefault(storage => storage.ID == id);
+            if (element != null)
             {
-                if (source.ElementStorages[i].StorageID == id)
+                return new StorageViewModel
                 {
-                    source.ElementStorages.RemoveAt(i--);
-                }
-            }
-            for (int i = 0; i < source.Storages.Count; ++i)
-            {
-                if (source.Storages[i].Id == id)
-                {
-                    source.Storages.RemoveAt(i);
-                    return;
-                }
+                    ID = element.ID,
+                    StorageName = element.StorageName,
+                    StorageElements = source.ElementStorages.Where(storagePC => storagePC.StorageID == element.ID).Select(storagePC => new ElementStorageViewModel
+                    {
+                        ID = storagePC.ID,
+                        StorageID = storagePC.StorageID,
+                        ElementID = storagePC.ElementID,
+                        ElementName = source.Elements.FirstOrDefault(storageC => storageC.ID == storagePC.ElementID)?.ElementName,
+                        Count = storagePC.Count
+                    }).ToList()
+                };
             }
             throw new Exception("Элемент не найден");
+        }
+
+        public List<StorageViewModel> GetList()
+        {
+            List<StorageViewModel> result = source.Storages.Select(storage => new StorageViewModel
+            {
+                ID = storage.ID,
+                StorageName = storage.StorageName,
+                StorageElements = source.ElementStorages.Where(storagePC => storagePC.StorageID == storage.ID).Select(storagePC => new ElementStorageViewModel
+                {
+                    ID = storagePC.ID,
+                    StorageID = storagePC.StorageID,
+                    ElementID = storagePC.ElementID,
+                    ElementName = source.Elements.FirstOrDefault(storageC => storageC.ID == storagePC.ElementID)?.ElementName,
+                    Count = storagePC.Count
+                }).ToList()
+            }).ToList();
+            return result;
+        }
+
+        public void UpdElement(StorageBindModel model)
+        {
+            Storage elem = source.Storages.FirstOrDefault(storage => storage.StorageName == model.StorageName && storage.ID != model.ID);
+            if (elem != null)
+            {
+                throw new Exception("Уже есть склад с таким названием");
+            }
+            elem = source.Storages.FirstOrDefault(storage => storage.ID == model.ID);
+            if (elem == null)
+            {
+                throw new Exception("Элемент не найден");
+            }
+            elem.StorageName = model.StorageName;
         }
     }
 }

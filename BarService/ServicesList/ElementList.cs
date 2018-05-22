@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BarService.BindingModels;
 using BarService.Interfaces;
 using BarService.ViewModel;
@@ -16,50 +17,14 @@ namespace BarService.ServicesList
             source = DataListSingleton.GetInstance();
         }
 
-        public List<ElementViewModel> GetList()
-        {
-            List<ElementViewModel> result = new List<ElementViewModel>();
-            for (int i = 0; i < source.Elements.Count; ++i)
-            {
-                result.Add(new ElementViewModel
-                {
-                    ID = source.Elements[i].ID,
-                    ElementName = source.Elements[i].ElementName
-                });
-            }
-            return result;
-        }
-
-        public ElementViewModel GetElement(int ID)
-        {
-            for (int i = 0; i < source.Elements.Count; ++i)
-            {
-                if (source.Elements[i].ID == ID)
-                {
-                    return new ElementViewModel
-                    {
-                        ID = source.Elements[i].ID,
-                        ElementName = source.Elements[i].ElementName
-                    };
-                }
-            }
-            throw new Exception("Элемент не найден");
-        }
-
         public void AddElement(ElementBindModel model)
         {
-            int maxID = 0;
-            for (int i = 0; i < source.Elements.Count; ++i)
+            Element elem = source.Elements.FirstOrDefault(element => element.ElementName == model.ElementName);
+            if (elem != null)
             {
-                if (source.Elements[i].ID > maxID)
-                {
-                    maxID = source.Elements[i].ID;
-                }
-                if (source.Elements[i].ElementName == model.ElementName)
-                {
-                    throw new Exception("Уже есть компонент с таким названием");
-                }
+                throw new Exception("Такой элемент уже есть");
             }
+            int maxID = source.Elements.Count > 0 ? source.Elements.Max(element => element.ID) : 0;
             source.Elements.Add(new Element
             {
                 ID = maxID + 1,
@@ -67,39 +32,59 @@ namespace BarService.ServicesList
             });
         }
 
-        public void UpdElement(ElementBindModel model)
+        public void DelElement(int ID)
         {
-            int index = -1;
-            for (int i = 0; i < source.Elements.Count; ++i)
+            Element elem = source.Elements.FirstOrDefault(element => element.ID == ID);
+            if (elem != null)
             {
-                if (source.Elements[i].ID == model.ID)
-                {
-                    index = i;
-                }
-                if (source.Elements[i].ElementName == model.ElementName &&
-                    source.Elements[i].ID != model.ID)
-                {
-                    throw new Exception("Уже есть компонент с таким названием");
-                }
+                source.Elements.Remove(elem);
             }
-            if (index == -1)
+            else
             {
                 throw new Exception("Элемент не найден");
             }
-            source.Elements[index].ElementName = model.ElementName;
         }
 
-        public void DelElement(int ID)
+        public ElementViewModel GetElement(int ID)
         {
-            for (int i = 0; i < source.Elements.Count; ++i)
+            Element elem = source.Elements.FirstOrDefault(element => element.ID == ID);
+            if (elem != null)
             {
-                if (source.Elements[i].ID == ID)
+                return new ElementViewModel
                 {
-                    source.Elements.RemoveAt(i);
-                    return;
-                }
+                    ID = elem.ID,
+                    ElementName = elem.ElementName
+                };
             }
             throw new Exception("Элемент не найден");
+        }
+
+        public List<ElementViewModel> GetList()
+        {
+            List<ElementViewModel> result = source.Elements
+                .Select(element => new ElementViewModel
+                {
+                    ID = element.ID,
+                    ElementName = element.ElementName
+                })
+                .ToList();
+            return result;
+        }
+
+        public void UpdElement(ElementBindModel model)
+        {
+            Element elem = source.Elements.FirstOrDefault(element =>
+                                        element.ElementName == model.ElementName && element.ID != model.ID);
+            if (elem != null)
+            {
+                throw new Exception("Уже есть компонент с таким названием");
+            }
+            elem = source.Elements.FirstOrDefault(element => element.ID == model.ID);
+            if (elem == null)
+            {
+                throw new Exception("Элемент не найден");
+            }
+            elem.ElementName = model.ElementName;
         }
     }
 }
