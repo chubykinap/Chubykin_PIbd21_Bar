@@ -38,6 +38,18 @@
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\packages\iTextSharp.5.5.13\lib\itextsharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Office.Interop.Word.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Word.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -55,6 +67,7 @@
     <Compile Include="BDImplementation\ElementBD.cs" />
     <Compile Include="BDImplementation\ExecutorBD.cs" />
     <Compile Include="BDImplementation\MainBD.cs" />
+    <Compile Include="BDImplementation\ReportBD.cs" />
     <Compile Include="BDImplementation\StorageBD.cs" />
     <Compile Include="BindingModels\CocktailBindModel.cs" />
     <Compile Include="BindingModels\CustomerBindModel.cs" />
@@ -63,6 +76,7 @@
     <Compile Include="BindingModels\ElementStorageBindModel.cs" />
     <Compile Include="BindingModels\ExecutorBindModel.cs" />
     <Compile Include="BindingModels\OrderBindModel.cs" />
+    <Compile Include="BindingModels\ReportBindModel.cs" />
     <Compile Include="BindingModels\StorageBindModel.cs" />
     <Compile Include="DataListSingleton.cs" />
     <Compile Include="Interfaces\ICocktail.cs" />
@@ -70,6 +84,7 @@
     <Compile Include="Interfaces\IElement.cs" />
     <Compile Include="Interfaces\IExecutor.cs" />
     <Compile Include="Interfaces\IMainService.cs" />
+    <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Interfaces\IStorage.cs" />
     <Compile Include="Migrations\201805220948204_FirstMigration.cs" />
     <Compile Include="Migrations\201805220948204_FirstMigration.Designer.cs">
@@ -77,6 +92,11 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="ServicesList\CocktailList.cs" />
     <Compile Include="ServicesList\CustomerList.cs" />
     <Compile Include="ServicesList\ElementList.cs" />
@@ -84,17 +104,20 @@
     <Compile Include="ServicesList\MainList.cs" />
     <Compile Include="ServicesList\StorageList.cs" />
     <Compile Include="ViewModel\CocktailViewModel.cs" />
+    <Compile Include="ViewModel\CustomerOrderViewModel.cs" />
     <Compile Include="ViewModel\CustomerViewModel.cs" />
     <Compile Include="ViewModel\ElementRequirementViewModel.cs" />
     <Compile Include="ViewModel\ElementStorageViewModel.cs" />
     <Compile Include="ViewModel\ElementViewModel.cs" />
     <Compile Include="ViewModel\ExecutorViewModel.cs" />
     <Compile Include="ViewModel\OrderViewModel.cs" />
+    <Compile Include="ViewModel\StorageLoadViewModel.cs" />
     <Compile Include="ViewModel\StorageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Resources\timcyr.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BarModel\BarModel.csproj">
@@ -105,6 +128,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201805220948204_FirstMigration.resx">
       <DependentUpon>201805220948204_FirstMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
