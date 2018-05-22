@@ -36,6 +36,10 @@
             this.складыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.сотрудникиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.пополнитьСкладToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.отчетыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.прайсИзделийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.загруженностьСкладовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.заказыКлиентовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.CreateOrder = new System.Windows.Forms.Button();
             this.TakeOrder = new System.Windows.Forms.Button();
@@ -50,10 +54,11 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.справочникToolStripMenuItem,
-            this.пополнитьСкладToolStripMenuItem});
+            this.пополнитьСкладToolStripMenuItem,
+            this.отчетыToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(678, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(890, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -111,6 +116,37 @@
             this.пополнитьСкладToolStripMenuItem.Text = "Пополнить склад";
             this.пополнитьСкладToolStripMenuItem.Click += new System.EventHandler(this.пополнитьСкладToolStripMenuItem_Click);
             // 
+            // отчетыToolStripMenuItem
+            // 
+            this.отчетыToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.прайсИзделийToolStripMenuItem,
+            this.загруженностьСкладовToolStripMenuItem,
+            this.заказыКлиентовToolStripMenuItem});
+            this.отчетыToolStripMenuItem.Name = "отчетыToolStripMenuItem";
+            this.отчетыToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.отчетыToolStripMenuItem.Text = "Отчеты";
+            // 
+            // прайсИзделийToolStripMenuItem
+            // 
+            this.прайсИзделийToolStripMenuItem.Name = "прайсИзделийToolStripMenuItem";
+            this.прайсИзделийToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.прайсИзделийToolStripMenuItem.Text = "Прайс изделий";
+            this.прайсИзделийToolStripMenuItem.Click += new System.EventHandler(this.прайсИзделийToolStripMenuItem_Click);
+            // 
+            // загруженностьСкладовToolStripMenuItem
+            // 
+            this.загруженностьСкладовToolStripMenuItem.Name = "загруженностьСкладовToolStripMenuItem";
+            this.загруженностьСкладовToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.загруженностьСкладовToolStripMenuItem.Text = "Загруженность складов";
+            this.загруженностьСкладовToolStripMenuItem.Click += new System.EventHandler(this.загруженностьСкладовToolStripMenuItem_Click);
+            // 
+            // заказыКлиентовToolStripMenuItem
+            // 
+            this.заказыКлиентовToolStripMenuItem.Name = "заказыКлиентовToolStripMenuItem";
+            this.заказыКлиентовToolStripMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.заказыКлиентовToolStripMenuItem.Text = "Заказы клиентов";
+            this.заказыКлиентовToolStripMenuItem.Click += new System.EventHandler(this.заказыКлиентовToolStripMenuItem_Click);
+            // 
             // dataGridView1
             // 
             this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
@@ -119,12 +155,12 @@
             this.dataGridView1.GridColor = System.Drawing.Color.White;
             this.dataGridView1.Location = new System.Drawing.Point(0, 24);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(521, 316);
+            this.dataGridView1.Size = new System.Drawing.Size(733, 352);
             this.dataGridView1.TabIndex = 1;
             // 
             // CreateOrder
             // 
-            this.CreateOrder.Location = new System.Drawing.Point(527, 24);
+            this.CreateOrder.Location = new System.Drawing.Point(739, 27);
             this.CreateOrder.Name = "CreateOrder";
             this.CreateOrder.Size = new System.Drawing.Size(139, 36);
             this.CreateOrder.TabIndex = 2;
@@ -134,7 +170,7 @@
             // 
             // TakeOrder
             // 
-            this.TakeOrder.Location = new System.Drawing.Point(527, 66);
+            this.TakeOrder.Location = new System.Drawing.Point(739, 69);
             this.TakeOrder.Name = "TakeOrder";
             this.TakeOrder.Size = new System.Drawing.Size(139, 36);
             this.TakeOrder.TabIndex = 3;
@@ -144,7 +180,7 @@
             // 
             // OrderReady
             // 
-            this.OrderReady.Location = new System.Drawing.Point(527, 108);
+            this.OrderReady.Location = new System.Drawing.Point(739, 111);
             this.OrderReady.Name = "OrderReady";
             this.OrderReady.Size = new System.Drawing.Size(139, 36);
             this.OrderReady.TabIndex = 4;
@@ -154,7 +190,7 @@
             // 
             // OrderPayed
             // 
-            this.OrderPayed.Location = new System.Drawing.Point(527, 150);
+            this.OrderPayed.Location = new System.Drawing.Point(739, 153);
             this.OrderPayed.Name = "OrderPayed";
             this.OrderPayed.Size = new System.Drawing.Size(139, 36);
             this.OrderPayed.TabIndex = 5;
@@ -164,7 +200,7 @@
             // 
             // UpdateList
             // 
-            this.UpdateList.Location = new System.Drawing.Point(527, 192);
+            this.UpdateList.Location = new System.Drawing.Point(739, 195);
             this.UpdateList.Name = "UpdateList";
             this.UpdateList.Size = new System.Drawing.Size(139, 36);
             this.UpdateList.TabIndex = 6;
@@ -176,7 +212,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(678, 340);
+            this.ClientSize = new System.Drawing.Size(890, 376);
             this.Controls.Add(this.UpdateList);
             this.Controls.Add(this.OrderPayed);
             this.Controls.Add(this.OrderReady);
@@ -211,6 +247,10 @@
         private System.Windows.Forms.Button OrderReady;
         private System.Windows.Forms.Button OrderPayed;
         private System.Windows.Forms.Button UpdateList;
+        private System.Windows.Forms.ToolStripMenuItem отчетыToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem прайсИзделийToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem загруженностьСкладовToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem заказыКлиентовToolStripMenuItem;
     }
 }
 

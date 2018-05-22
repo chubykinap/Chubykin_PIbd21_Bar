@@ -3,12 +3,6 @@ using BarService.Interfaces;
 using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Unity;
 using Unity.Attributes;
@@ -37,15 +31,15 @@ namespace BarView
                 try
                 {
                     CocktailViewModel view = service.GetElement(id.Value);
-                    if(view != null)
+                    if (view != null)
                     {
                         Name.Text = view.CocktailName;
                         Price.Text = view.Price.ToString();
                         productElems = view.ElementRequirements;
                         LoadData();
-                    } 
+                    }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -60,7 +54,7 @@ namespace BarView
         {
             try
             {
-                if(productElems != null)
+                if (productElems != null)
                 {
                     dataGridView1.DataSource = null;
                     dataGridView1.DataSource = productElems;
@@ -79,7 +73,7 @@ namespace BarView
         private void Add_Click(object sender, EventArgs e)
         {
             var form = container.Resolve<AddElementForm>();
-            if(form.ShowDialog() == DialogResult.OK)
+            if (form.ShowDialog() == DialogResult.OK)
             {
                 if (form.Model != null)
                 {
