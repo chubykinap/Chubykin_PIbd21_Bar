@@ -1,4 +1,5 @@
-﻿using BarService.Interfaces;
+﻿using BarService.BindingModels;
+using BarService.Interfaces;
 using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -13,11 +14,14 @@ namespace BarView
         [Dependency]
         public new IUnityContainer container { set; get; }
         private readonly IMainService service;
+        private readonly IReportService reportService;
 
-        public MainForm(IMainService service)
+        public MainForm(IMainService service, IReportService reportService)
         {
             InitializeComponent();
             this.service = service;
+            this.reportService = reportService;
+            LoadData();
         }
 
         private void LoadData()
@@ -49,7 +53,7 @@ namespace BarView
 
         private void изделияToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<CocktailsForm>();
+            var form = container.Resolve<CocktailForm>();
             form.ShowDialog();
         }
 
@@ -132,6 +136,41 @@ namespace BarView
         private void UpdateList_Click(object sender, EventArgs e)
         {
             LoadData();
+        }
+
+        private void прайсИзделийToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog
+            {
+                Filter = "doc|*.doc|docx|*.docx"
+            };
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    reportService.SaveCocktailPrice(new ReportBindModel
+                    {
+                        FileName = sfd.FileName
+                    });
+                    MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void загруженностьСкладовToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = container.Resolve<StorageLoadForm>();
+            form.ShowDialog();
+        }
+
+        private void заказыКлиентовToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = container.Resolve<CustomerOrdersForm>();
+            form.ShowDialog();
         }
     }
 }
