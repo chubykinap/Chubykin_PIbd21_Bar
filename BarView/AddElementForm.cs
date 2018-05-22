@@ -2,36 +2,34 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class AddElementForm : Form
     {
-        [Dependency]
-        public new IUnityContainer container { set; get; }
-        private readonly BarService.Interfaces.IElement service;
         private ElementRequirementsViewModel model;
         public ElementRequirementsViewModel Model { set { model = value; } get { return model; } }
 
-        public AddElementForm(BarService.Interfaces.IElement service)
+        public AddElementForm()
         {
             InitializeComponent();
-            this.service = service;
         }
 
         private void AddComponentForm_Load(object sender, EventArgs e)
         {
             try
             {
-                List<ElementViewModel> list = service.GetList();
-                if (list != null)
+                var response = APIClient.GetRequest("api/Element/GetList");
+                if (response.Result.IsSuccessStatusCode)
                 {
                     comboBox1.DisplayMember = "ElementName";
                     comboBox1.ValueMember = "ID";
-                    comboBox1.DataSource = list;
+                    comboBox1.DataSource = APIClient.GetElement<List<ElementViewModel>>(response);
                     comboBox1.SelectedItem = null;
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
                 }
             }
             catch (Exception ex)

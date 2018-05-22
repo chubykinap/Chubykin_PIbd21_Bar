@@ -1,23 +1,16 @@
-﻿using BarService.Interfaces;
+﻿using BarService.BindingModels;
 using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class CustomersForm : Form
     {
-        [Dependency]
-        public new IUnityContainer container { set; get; }
-        private readonly ICustomer service;
-
-        public CustomersForm(ICustomer service)
+        public CustomersForm()
         {
             InitializeComponent();
-            this.service = service;
         }
 
         private void ClientsForm_Load(object sender, EventArgs e)
@@ -29,12 +22,20 @@ namespace BarView
         {
             try
             {
-                List<CustomerViewModel> list = service.GetList();
-                if (list != null)
+                var response = APIClient.GetRequest("api/Customer/GetList");
+                if (response.Result.IsSuccessStatusCode)
                 {
-                    dataGridView1.DataSource = list;
-                    dataGridView1.Columns[0].Visible = false;
-                    dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    List<CustomerViewModel> list = APIClient.GetElement<List<CustomerViewModel>>(response);
+                    if (list != null)
+                    {
+                        dataGridView1.DataSource = list;
+                        dataGridView1.Columns[0].Visible = false;
+                        dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    }
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
                 }
             }
             catch (Exception ex)
@@ -45,7 +46,7 @@ namespace BarView
 
         private void Add_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<AddCustomerForm>();
+            var form = new AddCustomerForm();
             if (form.ShowDialog() == DialogResult.OK)
             {
                 LoadData();
@@ -56,7 +57,7 @@ namespace BarView
         {
             if (dataGridView1.SelectedRows.Count == 1)
             {
-                var form = container.Resolve<AddCustomerForm>();
+                var form = new AddCustomerForm();
                 form.ID = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
                 if (form.ShowDialog() == DialogResult.OK)
                 {
@@ -74,7 +75,11 @@ namespace BarView
                     int id = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
                     try
                     {
-                        service.DelElement(id);
+                        var response = APIClient.PostRequest("api/Customer/DelElement", new CustomerBindModel { ID = id });
+                        if (!response.Result.IsSuccessStatusCode)
+                        {
+                            throw new Exception(APIClient.GetError(response));
+                        }
                     }
                     catch (Exception ex)
                     {

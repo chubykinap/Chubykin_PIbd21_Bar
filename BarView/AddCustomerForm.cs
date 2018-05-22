@@ -1,41 +1,37 @@
-﻿using BarService.Interfaces;
+﻿using BarService.BindingModels;
 using BarService.ViewModel;
 using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class AddCustomerForm : Form
     {
-        [Dependency]
-        public new IUnityContainer container { get; set; }
         private int? id;
         public int ID { set { id = value; } }
-        private readonly ICustomer service;
-
-        public AddCustomerForm(ICustomer service)
-        {
-            InitializeComponent();
-            this.service = service;
-        }
 
         public AddCustomerForm()
         {
             InitializeComponent();
         }
 
-        private void AddClientForm_Load(object sender, EventArgs e)
+        private void AddCustomerForm_Load(object sender, EventArgs e)
         {
             if (id.HasValue)
             {
                 try
                 {
-                    CustomerViewModel view = service.GetElement(id.Value);
-                    if (view != null)
+                    var response = APIClient.GetRequest("api/Customer/Get/" + id.Value);
+                    if (response.Result.IsSuccessStatusCode)
                     {
-                        FIO.Text = view.CustomerFIO;
+                        var Customer = APIClient.GetElement<CustomerViewModel>(response);
+                        FIO.Text = Customer.CustomerFIO;
+                    }
+                    else
+                    {
+                        throw new Exception(APIClient.GetError(response));
                     }
                 }
                 catch (Exception ex)
@@ -50,12 +46,14 @@ namespace BarView
             if (string.IsNullOrEmpty(FIO.Text))
             {
                 MessageBox.Show("Введите ФИО", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
             try
             {
+                Task<HttpResponseMessage> response;
                 if (id.HasValue)
                 {
-                    service.UpdElement(new BarService.BindingModels.CustomerBindModel
+                    response = APIClient.PostRequest("api/Customer/UpdElement", new CustomerBindModel
                     {
                         ID = id.Value,
                         CustomerFIO = FIO.Text
@@ -63,14 +61,21 @@ namespace BarView
                 }
                 else
                 {
-                    service.AddElement(new BarService.BindingModels.CustomerBindModel
+                    response = APIClient.PostRequest("api/Customer/AddElement", new CustomerBindModel
                     {
                         CustomerFIO = FIO.Text
                     });
                 }
-                MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DialogResult = DialogResult.OK;
-                Close();
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
+                }
             }
             catch (Exception ex)
             {

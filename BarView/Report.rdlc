@@ -430,7 +430,8 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>DataSetOrders</DataSetName>
-        <Top>2.69034cm</Top>
+        <Top>2.78625cm</Top>
+        <Left>0.6145cm</Left>
         <Height>1.2cm</Height>
         <Width>18.73062cm</Width>
         <Style>
@@ -519,8 +520,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox6</rd:DefaultName>
-        <Top>4.09208cm</Top>
-        <Left>11.00349cm</Left>
+        <Top>4.16264cm</Top>
+        <Left>11.61799cm</Left>
         <Height>0.68792cm</Height>
         <Width>2.25088cm</Width>
         <ZIndex>3</ZIndex>
@@ -551,6 +552,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox6</rd:DefaultName>
+        <Top>4.16264cm</Top>
+        <Left>13.86887cm</Left>
         <Top>4.09208cm</Top>
         <Left>13.32493cm</Left>
         <Height>0.68792cm</Height>
@@ -567,10 +570,10 @@
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>2in</Height>
+    <Height>2.70833in</Height>
     <Style />
   </Body>
-  <Width>7.37426in</Width>
+  <Width>7.85343in</Width>
   <Page>
     <PageHeight>29.7cm</PageHeight>
     <PageWidth>21cm</PageWidth>
@@ -582,6 +585,61 @@
     <Style />
   </Page>
   <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="BarServiceViewModel">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>50d14bfa-2e1a-469b-bf90-a32e1040cf59</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSetOrders">
+      <Query>
+        <DataSourceName>BarServiceViewModel</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="CocktailName">
+          <DataField>CocktailName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Count">
+          <DataField>Count</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="CustomerName">
+          <DataField>CustomerName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DateCreate">
+          <DataField>DateCreate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Status">
+          <DataField>Status</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Sum">
+          <DataField>Sum</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>BarService.ViewModel</rd:DataSetName>
+        <rd:TableName>CustomerOrderViewModel</rd:TableName>
+        <rd:ObjectDataSourceType>BarService.ViewModel.CustomerOrderViewModel, BarService, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="ReportParameterPeriod">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+  </ReportParameters>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
-  <rd:ReportID>cdfa0ed8-c2f4-46c3-9d66-d5a281c49509</rd:ReportID>
+  <rd:ReportID>5d8083c5-0a86-4219-a0a3-ee82269ae73f</rd:ReportID>
 </Report>

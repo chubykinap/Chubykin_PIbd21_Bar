@@ -1,52 +1,53 @@
 ﻿using BarService.BindingModels;
-using BarService.Interfaces;
 using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class OrderNewElementsForm : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
-
-        private readonly IStorage serviceS;
-
-        private readonly IElement serviceC;
-
-        private readonly IMainService serviceM;
-
-        public OrderNewElementsForm(IStorage serviceS, IElement serviceC, IMainService serviceM)
+        public OrderNewElementsForm()
         {
             InitializeComponent();
-            this.serviceS = serviceS;
-            this.serviceC = serviceC;
-            this.serviceM = serviceM;
         }
 
         private void OrderNewElementsForm_Load(object sender, EventArgs e)
         {
             try
             {
-                List<ElementViewModel> listC = serviceC.GetList();
-                if (listC != null)
+                var responseC = APIClient.GetRequest("api/Element/GetList");
+                if (responseC.Result.IsSuccessStatusCode)
                 {
-                    ElementTB.DisplayMember = "ElementName";
-                    ElementTB.ValueMember = "ID";
-                    ElementTB.DataSource = listC;
-                    ElementTB.SelectedItem = null;
+                    List<ElementViewModel> list = APIClient.GetElement<List<ElementViewModel>>(responseC);
+                    if (list != null)
+                    {
+                        ElementTB.DisplayMember = "ElementName";
+                        ElementTB.ValueMember = "ID";
+                        ElementTB.DataSource = list;
+                        ElementTB.SelectedItem = null;
+                    }
                 }
-                List<StorageViewModel> listS = serviceS.GetList();
-                if (listS != null)
+                else
                 {
-                    StorageTB.DisplayMember = "StorageName";
-                    StorageTB.ValueMember = "ID";
-                    StorageTB.DataSource = listS;
-                    StorageTB.SelectedItem = null;
+                    throw new Exception(APIClient.GetError(responseC));
+                }
+                var responseS = APIClient.GetRequest("api/Storage/GetList");
+                if (responseS.Result.IsSuccessStatusCode)
+                {
+                    List<StorageViewModel> list = APIClient.GetElement<List<StorageViewModel>>(responseS);
+                    if (list != null)
+                    {
+                        StorageTB.DisplayMember = "StorageName";
+                        StorageTB.ValueMember = "ID";
+                        StorageTB.DataSource = list;
+                        StorageTB.SelectedItem = null;
+                    }
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(responseC));
                 }
             }
             catch (Exception ex)
@@ -74,15 +75,22 @@ namespace BarView
             }
             try
             {
-                serviceM.PutElementOnStorage(new ElementStorageBindModel
+                var response = APIClient.PostRequest("api/Main/PutElementOnStorage", new ElementStorageBindModel
                 {
                     ElementID = Convert.ToInt32(ElementTB.SelectedValue),
                     StorageID = Convert.ToInt32(StorageTB.SelectedValue),
                     Count = Convert.ToInt32(Count.Text)
                 });
-                MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DialogResult = DialogResult.OK;
-                Close();
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
+                }
             }
             catch (Exception ex)
             {

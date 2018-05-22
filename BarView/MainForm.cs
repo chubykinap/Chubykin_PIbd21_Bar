@@ -1,26 +1,16 @@
 ﻿using BarService.BindingModels;
-using BarService.Interfaces;
 using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class MainForm : Form
     {
-        [Dependency]
-        public new IUnityContainer container { set; get; }
-        private readonly IMainService service;
-        private readonly IReportService reportService;
-
-        public MainForm(IMainService service, IReportService reportService)
+        public MainForm()
         {
             InitializeComponent();
-            this.service = service;
-            this.reportService = reportService;
             LoadData();
         }
 
@@ -28,15 +18,23 @@ namespace BarView
         {
             try
             {
-                List<OrderViewModel> list = service.GetList();
-                if (list != null)
+                var response = APIClient.GetRequest("api/Main/GetList");
+                if (response.Result.IsSuccessStatusCode)
                 {
-                    dataGridView1.DataSource = list;
-                    dataGridView1.Columns[0].Visible = false;
-                    dataGridView1.Columns[1].Visible = false;
-                    dataGridView1.Columns[3].Visible = false;
-                    dataGridView1.Columns[5].Visible = false;
-                    dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    List<OrderViewModel> list = APIClient.GetElement<List<OrderViewModel>>(response);
+                    if (list != null)
+                    {
+                        dataGridView1.DataSource = list;
+                        dataGridView1.Columns[0].Visible = false;
+                        dataGridView1.Columns[1].Visible = false;
+                        dataGridView1.Columns[3].Visible = false;
+                        dataGridView1.Columns[5].Visible = false;
+                        dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    }
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
                 }
             }
             catch (Exception ex)
@@ -47,43 +45,43 @@ namespace BarView
 
         private void клиентToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<CustomersForm>();
+            var form = new CustomersForm();
             form.ShowDialog();
         }
 
         private void изделияToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<CocktailForm>();
+            var form = new CocktailsForm();
             form.ShowDialog();
         }
 
         private void компонентыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<ElementsForm>();
+            var form = new ElementsForm();
             form.ShowDialog();
         }
 
         private void складыToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<StoragesForm>();
+            var form = new StoragesForm();
             form.ShowDialog();
         }
 
         private void сотрудникиToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<ExecutorsForm>();
+            var form = new ExecutorsForm();
             form.ShowDialog();
         }
 
         private void пополнитьСкладToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<OrderNewElementsForm>();
+            var form = new OrderNewElementsForm();
             form.ShowDialog();
         }
 
         private void CreateOrder_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<CreateOrderForm>();
+            var form = new CreateOrderForm();
             form.ShowDialog();
             LoadData();
         }
@@ -92,8 +90,10 @@ namespace BarView
         {
             if (dataGridView1.SelectedRows.Count == 1)
             {
-                var form = container.Resolve<TakeOrderForm>();
-                form.ID = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
+                var form = new TakeOrderForm
+                {
+                    ID = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value)
+                };
                 form.ShowDialog();
                 LoadData();
             }
@@ -106,8 +106,18 @@ namespace BarView
                 int id = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
                 try
                 {
-                    service.FinishOrder(id);
-                    LoadData();
+                    var response = APIClient.PostRequest("api/Main/FinishOrder", new OrderBindModel
+                    {
+                        ID = id
+                    });
+                    if (response.Result.IsSuccessStatusCode)
+                    {
+                        LoadData();
+                    }
+                    else
+                    {
+                        throw new Exception(APIClient.GetError(response));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -123,8 +133,18 @@ namespace BarView
                 int id = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
                 try
                 {
-                    service.PayOrder(id);
-                    LoadData();
+                    var response = APIClient.PostRequest("api/Main/.PayOrder", new OrderBindModel
+                    {
+                        ID = id
+                    });
+                    if (response.Result.IsSuccessStatusCode)
+                    {
+                        LoadData();
+                    }
+                    else
+                    {
+                        throw new Exception(APIClient.GetError(response));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -148,11 +168,18 @@ namespace BarView
             {
                 try
                 {
-                    reportService.SaveCocktailPrice(new ReportBindModel
+                    var response = APIClient.PostRequest("api/Report/SaveProductPrice", new ReportBindModel
                     {
                         FileName = sfd.FileName
                     });
-                    MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (response.Result.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        throw new Exception(APIClient.GetError(response));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -163,13 +190,13 @@ namespace BarView
 
         private void загруженностьСкладовToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<StorageLoadForm>();
+            var form = new StorageLoadForm();
             form.ShowDialog();
         }
 
         private void заказыКлиентовToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = container.Resolve<CustomerOrdersForm>();
+            var form = new CustomerOrdersForm();
             form.ShowDialog();
         }
     }

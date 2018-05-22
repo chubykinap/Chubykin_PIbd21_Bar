@@ -1,30 +1,22 @@
 ﻿using BarService.BindingModels;
-using BarService.Interfaces;
+using BarService.ViewModel;
 using Microsoft.Reporting.WinForms;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class CustomerOrdersForm : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
-
-        private readonly IReportService service;
-
-        public CustomerOrdersForm(IReportService service)
+        public CustomerOrdersForm()
         {
-            this.service = service;
             InitializeComponent();
         }
 
-
         private void CustomerOrdersForm_Load(object sender, System.EventArgs e)
         {
-            reportViewer1.RefreshReport();
+            this.reportViewer1.RefreshReport();
         }
 
         private void Make_Click(object sender, System.EventArgs e)
@@ -41,15 +33,21 @@ namespace BarView
                                             " по " + dateTimePicker2.Value.ToShortDateString());
                 reportViewer1.LocalReport.SetParameters(parameter);
 
-                var dataSource = service.GetCustomerOrders(new ReportBindModel
+                var response = APIClient.PostRequest("api/Report/GetCustomerOrders", new ReportBindModel
                 {
                     DateFrom = dateTimePicker1.Value,
                     DateTo = dateTimePicker2.Value
                 });
-                CustomerOrderViewModelBindingSource.DataSource = dataSource;
-                ReportDataSource source = new ReportDataSource("DataSetOrders", dataSource);
-                reportViewer1.LocalReport.DataSources.Add(source);
-
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    var dataSource = APIClient.GetElement<List<CustomerOrderViewModel>>(response);
+                    ReportDataSource source = new ReportDataSource("DataSetOrders", dataSource);
+                    reportViewer1.LocalReport.DataSources.Add(source);
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
+                }
                 reportViewer1.RefreshReport();
             }
             catch (Exception ex)
@@ -73,13 +71,20 @@ namespace BarView
             {
                 try
                 {
-                    service.SaveCustomerOrders(new ReportBindModel
+                    var response = APIClient.PostRequest("api/Report/SaveCustomerOrders", new ReportBindModel
                     {
                         FileName = sfd.FileName,
                         DateFrom = dateTimePicker1.Value,
                         DateTo = dateTimePicker2.Value
                     });
-                    MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (response.Result.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        throw new Exception(APIClient.GetError(response));
+                    }
                 }
                 catch (Exception ex)
                 {
