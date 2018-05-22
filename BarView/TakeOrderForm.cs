@@ -1,38 +1,20 @@
 ﻿using BarService.BindingModels;
-using BarService.Interfaces;
 using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class TakeOrderForm : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
-
         public int ID { set { id = value; } }
-
-        private readonly IExecutor serviceI;
-
-        private readonly IMainService serviceM;
 
         private int? id;
 
-        public TakeOrderForm(IExecutor serviceI, IMainService serviceM)
+        public TakeOrderForm()
         {
             InitializeComponent();
-            this.serviceI = serviceI;
-            this.serviceM = serviceM;
         }
 
         private void TakeOrderForm_Load(object sender, EventArgs e)
@@ -44,13 +26,21 @@ namespace BarView
                     MessageBox.Show("Не указан заказ", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Close();
                 }
-                List<ExecutorViewModel> listI = serviceI.GetList();
-                if (listI != null)
+                var response = APIClient.GetRequest("api/Executor/GetList");
+                if (response.Result.IsSuccessStatusCode)
                 {
-                    ExecutorCB.DisplayMember = "ExecutorFIO";
-                    ExecutorCB.ValueMember = "ID";
-                    ExecutorCB.DataSource = listI;
-                    ExecutorCB.SelectedItem = null;
+                    List<ExecutorViewModel> listI = APIClient.GetElement<List<ExecutorViewModel>>(response);
+                    if (listI != null)
+                    {
+                        ExecutorCB.DisplayMember = "ExecutorFIO";
+                        ExecutorCB.ValueMember = "ID";
+                        ExecutorCB.DataSource = listI;
+                        ExecutorCB.SelectedItem = null;
+                    }
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
                 }
             }
             catch (Exception ex)
@@ -68,14 +58,21 @@ namespace BarView
             }
             try
             {
-                serviceM.TakeOrderInWork(new OrderBindModel
+                var response = APIClient.PostRequest("api/Main/TakeOrderInWork", new OrderBindModel
                 {
                     ID = id.Value,
                     ExecutorID = Convert.ToInt32(ExecutorCB.SelectedValue)
                 });
-                MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DialogResult = DialogResult.OK;
-                Close();
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
+                }
             }
             catch (Exception ex)
             {

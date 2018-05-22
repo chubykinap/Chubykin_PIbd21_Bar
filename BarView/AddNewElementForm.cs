@@ -1,28 +1,21 @@
 ﻿using BarService.BindingModels;
-using BarService.Interfaces;
 using BarService.ViewModel;
 using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class AddNewElementForm : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
-
         public int ID { set { id = value; } }
-
-        private readonly IElement service;
 
         private int? id;
 
-        public AddNewElementForm(IElement service)
+        public AddNewElementForm()
         {
             InitializeComponent();
-            this.service = service;
         }
 
         private void AddNewElementForm_Load(object sender, EventArgs e)
@@ -31,10 +24,15 @@ namespace BarView
             {
                 try
                 {
-                    ElementViewModel view = service.GetElement(id.Value);
-                    if (view != null)
+                    var response = APIClient.GetRequest("api/Element/Get/" + id.Value);
+                    if (response.Result.IsSuccessStatusCode)
                     {
-                        NameTextBox.Text = view.ElementName;
+                        var component = APIClient.GetElement<ElementViewModel>(response);
+                        NameTextBox.Text = component.ElementName;
+                    }
+                    else
+                    {
+                        throw new Exception(APIClient.GetError(response));
                     }
                 }
                 catch (Exception ex)
@@ -53,9 +51,10 @@ namespace BarView
             }
             try
             {
+                Task<HttpResponseMessage> response;
                 if (id.HasValue)
                 {
-                    service.UpdElement(new ElementBindModel
+                    response = APIClient.PostRequest("api/Element/UpdElement", new ElementBindModel
                     {
                         ID = id.Value,
                         ElementName = NameTextBox.Text
@@ -63,14 +62,21 @@ namespace BarView
                 }
                 else
                 {
-                    service.AddElement(new ElementBindModel
+                    response = APIClient.PostRequest("api/Element/UpdElement", new ElementBindModel
                     {
                         ElementName = NameTextBox.Text
                     });
                 }
-                MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DialogResult = DialogResult.OK;
-                Close();
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
+                }
             }
             catch (Exception ex)
             {

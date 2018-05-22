@@ -1,28 +1,21 @@
 ﻿using BarService.BindingModels;
-using BarService.Interfaces;
 using BarService.ViewModel;
 using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class AddStorageForm : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
-
         public int Id { set { id = value; } }
-
-        private readonly IStorage service;
 
         private int? id;
 
-        public AddStorageForm(IStorage service)
+        public AddStorageForm()
         {
             InitializeComponent();
-            this.service = service;
         }
 
         private void AddStorageForm_Load(object sender, EventArgs e)
@@ -31,10 +24,20 @@ namespace BarView
             {
                 try
                 {
-                    StorageViewModel view = service.GetElement(id.Value);
-                    if (view != null)
+                    var response = APIClient.GetRequest("api/Storage/Get/" + id.Value);
+                    if (response.Result.IsSuccessStatusCode)
                     {
-                        NameTextBox.Text = view.StorageName;
+                        var stock = APIClient.GetElement<StorageViewModel>(response);
+                        textBoxName.Text = stock.StorageName;
+                        dataGridView.DataSource = stock.StorageElements;
+                        dataGridView.Columns[0].Visible = false;
+                        dataGridView.Columns[1].Visible = false;
+                        dataGridView.Columns[2].Visible = false;
+                        dataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    }
+                    else
+                    {
+                        throw new Exception(APIClient.GetError(response));
                     }
                 }
                 catch (Exception ex)
@@ -46,31 +49,39 @@ namespace BarView
 
         private void Save_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(NameTextBox.Text))
+            if (string.IsNullOrEmpty(textBoxName.Text))
             {
                 MessageBox.Show("Заполните название", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             try
             {
+                Task<HttpResponseMessage> response;
                 if (id.HasValue)
                 {
-                    service.UpdElement(new StorageBindModel
+                    response = APIClient.PostRequest("api/Storage/UpdElement", new StorageBindModel
                     {
                         ID = id.Value,
-                        StorageName = NameTextBox.Text
+                        StorageName = textBoxName.Text
                     });
                 }
                 else
                 {
-                    service.AddElement(new StorageBindModel
+                    response = APIClient.PostRequest("api/Storage/UpdElement", new StorageBindModel
                     {
-                        StorageName = NameTextBox.Text
+                        StorageName = textBoxName.Text
                     });
                 }
-                MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DialogResult = DialogResult.OK;
-                Close();
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
+                }
             }
             catch (Exception ex)
             {

@@ -12,9 +12,9 @@ namespace BarModel
         public string ElementName { get; set; }
 
         [ForeignKey("ElementID")]
-        public virtual List<ElementRequirement> ProductComponents { get; set; }
+        public virtual List<ElementRequirement> ElementRequirement { get; set; }
 
         [ForeignKey("ElementID")]
-        public virtual List<ElementStorage> StockComponents { get; set; }
+        public virtual List<ElementStorage> ElementStorage { get; set; }
     }
 }

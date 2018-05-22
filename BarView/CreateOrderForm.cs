@@ -1,52 +1,53 @@
 ﻿using BarService.BindingModels;
-using BarService.Interfaces;
 using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Unity;
-using Unity.Attributes;
 
 namespace BarView
 {
     public partial class CreateOrderForm : Form
     {
-        [Dependency]
-        public new IUnityContainer Container { get; set; }
-
-        private readonly ICustomer serviceC;
-
-        private readonly ICocktail serviceP;
-
-        private readonly IMainService serviceM;
-
-        public CreateOrderForm(ICustomer serviceC, ICocktail serviceP, IMainService serviceM)
+        public CreateOrderForm()
         {
             InitializeComponent();
-            this.serviceC = serviceC;
-            this.serviceP = serviceP;
-            this.serviceM = serviceM;
         }
 
         private void CreateOrderForm_Load(object sender, EventArgs e)
         {
             try
             {
-                List<CustomerViewModel> listC = serviceC.GetList();
-                if (listC != null)
+                var responseC = APIClient.GetRequest("api/Customer/GetList");
+                if (responseC.Result.IsSuccessStatusCode)
                 {
-                    CustomerCB.DisplayMember = "CustomerFIO";
-                    CustomerCB.ValueMember = "ID";
-                    CustomerCB.DataSource = listC;
-                    CustomerCB.SelectedItem = null;
+                    List<CustomerViewModel> list = APIClient.GetElement<List<CustomerViewModel>>(responseC);
+                    if (list != null)
+                    {
+                        CustomerCB.DisplayMember = "CustomerFIO";
+                        CustomerCB.ValueMember = "ID";
+                        CustomerCB.DataSource = list;
+                        CustomerCB.SelectedItem = null;
+                    }
                 }
-                List<CocktailViewModel> listP = serviceP.GetList();
-                if (listP != null)
+                else
                 {
-                    CocktailCB.DisplayMember = "CocktailName";
-                    CocktailCB.ValueMember = "ID";
-                    CocktailCB.DataSource = listP;
-                    CocktailCB.SelectedItem = null;
+                    throw new Exception(APIClient.GetError(responseC));
+                }
+                var responseP = APIClient.GetRequest("api/Cocktail/GetList");
+                if (responseP.Result.IsSuccessStatusCode)
+                {
+                    List<CocktailViewModel> list = APIClient.GetElement<List<CocktailViewModel>>(responseP);
+                    if (list != null)
+                    {
+                        CocktailCB.DisplayMember = "CocktailName";
+                        CocktailCB.ValueMember = "ID";
+                        CocktailCB.DataSource = list;
+                        CocktailCB.SelectedItem = null;
+                    }
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(responseP));
                 }
             }
             catch (Exception ex)
@@ -62,9 +63,17 @@ namespace BarView
                 try
                 {
                     int id = Convert.ToInt32(CocktailCB.SelectedValue);
-                    CocktailViewModel product = serviceP.GetElement(id);
-                    int count = Convert.ToInt32(CountTB.Text);
-                    SumTB.Text = (count * product.Price).ToString();
+                    var responseP = APIClient.GetRequest("api/Cocktail/Get/" + id);
+                    if (responseP.Result.IsSuccessStatusCode)
+                    {
+                        CocktailViewModel product = APIClient.GetElement<CocktailViewModel>(responseP);
+                        int count = Convert.ToInt32(CountTB.Text);
+                        SumTB.Text = (count * (int)product.Price).ToString();
+                    }
+                    else
+                    {
+                        throw new Exception(APIClient.GetError(responseP));
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -92,16 +101,22 @@ namespace BarView
             }
             try
             {
-                serviceM.CreateOrder(new OrderBindModel
+                var response = APIClient.PostRequest("api/Main/CreateOrder", new OrderBindModel
                 {
                     CustomerID = Convert.ToInt32(CustomerCB.SelectedValue),
                     CocktailID = Convert.ToInt32(CocktailCB.SelectedValue),
                     Count = Convert.ToInt32(CountTB.Text),
                     Sum = Convert.ToInt32(SumTB.Text)
-                });
-                MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DialogResult = DialogResult.OK;
-                Close();
+                }); if (response.Result.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    throw new Exception(APIClient.GetError(response));
+                }
             }
             catch (Exception ex)
             {
