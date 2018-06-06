@@ -102,7 +102,7 @@
             this.Controls.Add(this.label1);
             this.Name = "AddllementForm";
             this.Text = "AddElementForm";
-            this.Load += new System.EventHandler(this.AddComponentForm_Load);
+            this.Load += new System.EventHandler(this.AddElementForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

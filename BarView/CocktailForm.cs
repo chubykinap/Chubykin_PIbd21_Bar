@@ -1,5 +1,4 @@
 ﻿using BarService.BindingModels;
-using BarService.Interfaces;
 using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -20,28 +19,24 @@ namespace BarView
             InitializeComponent();
         }
 
-        private void ProductForm_Load(object sender, EventArgs e)
+        private void CocktailForm_Load(object sender, EventArgs e)
         {
             if (id.HasValue)
             {
                 try
                 {
-                    var response = APIClient.GetRequest("api/Cocktail/Get/" + id.Value);
-                    if (response.Result.IsSuccessStatusCode)
-                    {
-                        var product = APIClient.GetElement<CocktailViewModel>(response);
-                        Name.Text = product.CocktailName;
-                        Price.Text = product.Price.ToString();
-                        productElems = product.ElementRequirements;
-                        LoadData();
-                    }
-                    else
-                    {
-                        throw new Exception(APIClient.GetError(response));
-                    }
+                    var product = Task.Run(() => APIClient.GetRequestData<CocktailViewModel>("api/Cocktail/Get/" + id.Value)).Result;
+                    Name.Text = product.CocktailName;
+                    Price.Text = product.Price.ToString();
+                    productElems = product.ElementRequirements;
+                    LoadData();
                 }
                 catch (Exception ex)
                 {
+                    while (ex.InnerException != null)
+                    {
+                        ex = ex.InnerException;
+                    }
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -143,59 +138,55 @@ namespace BarView
                 MessageBox.Show("Заполните компоненты", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            try
+            List<ElementRequirementsBindModel> productComponentBM = new List<ElementRequirementsBindModel>();
+            for (int i = 0; i < productElems.Count; ++i)
             {
-                List<ElementRequirementsBindModel> productComponentBM = new List<ElementRequirementsBindModel>();
-                for (int i = 0; i < productElems.Count; ++i)
+                productComponentBM.Add(new ElementRequirementsBindModel
                 {
-                    productComponentBM.Add(new ElementRequirementsBindModel
-                    {
-                        ID = productElems[i].ID,
-                        CocktailID = productElems[i].CocktailID,
-                        ElementID = productElems[i].ElementID,
-                        Count = productElems[i].Count
-                    });
-                }
-                Task<HttpResponseMessage> response;
-                if (id.HasValue)
-                {
-                    response = APIClient.PostRequest("api/Cocktail/UpdElement", new CocktailBindModel
-                    {
-                        ID = id.Value,
-                        CocktailName = NameTextBox.Text,
-                        Price = Convert.ToInt32(PriceTextBox.Text),
-                        ElementRequirements = productComponentBM
-                    });
-                }
-                else
-                {
-                    response = APIClient.PostRequest("api/Cocktail/UpdElement", new CocktailBindModel
-                    {
-                        CocktailName = NameTextBox.Text,
-                        Price = Convert.ToInt32(PriceTextBox.Text),
-                        ElementRequirements = productComponentBM
-                    });
-                }
-                if (response.Result.IsSuccessStatusCode)
-                {
-                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
-                else
-                {
-                    throw new Exception(APIClient.GetError(response));
-                }
+                    ID = productElems[i].ID,
+                    CocktailID = productElems[i].CocktailID,
+                    ElementID = productElems[i].ElementID,
+                    Count = productElems[i].Count
+                });
             }
-            catch (Exception ex)
+            string name = NameTextBox.Text;
+            int price = Convert.ToInt32(PriceTextBox.Text);
+            Task task;
+            if (id.HasValue)
             {
+                task = Task.Run(() => APIClient.PostRequestData("api/Cocktail/UpdElement", new CocktailBindModel
+                {
+                    ID = id.Value,
+                    CocktailName = NameTextBox.Text,
+                    Price = Convert.ToInt32(PriceTextBox.Text),
+                    ElementRequirements = productComponentBM
+                }));
+            }
+            else
+            {
+                task = Task.Run(() => APIClient.PostRequestData("api/Cocktail/UpdElement", new CocktailBindModel
+                {
+                    CocktailName = NameTextBox.Text,
+                    Price = Convert.ToInt32(PriceTextBox.Text),
+                    ElementRequirements = productComponentBM
+                }));
+            }
+            task.ContinueWith((prevTask) => MessageBox.Show("Сохранение прошло успешно. Обновите список", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information),
+                TaskContinuationOptions.OnlyOnRanToCompletion);
+            task.ContinueWith((prevTask) =>
+            {
+                var ex = (Exception)prevTask.Exception;
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                }
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }, TaskContinuationOptions.OnlyOnFaulted);
+            Close();
         }
 
         private void Cancel_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
             Close();
         }
     }

@@ -542,7 +542,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=Fields!Sum.Value</Value>
+                <Value>=Sum(Fields!Sum.Value, "DataSetOrders")</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>

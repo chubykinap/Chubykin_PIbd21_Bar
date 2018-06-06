@@ -1,7 +1,6 @@
 ﻿using BarService.BindingModels;
 using BarService.ViewModel;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -24,22 +23,15 @@ namespace BarView
             {
                 try
                 {
-                    var response = APIClient.GetRequest("api/Executor/Get/" + id.Value);
-                    if (response.Result.IsSuccessStatusCode)
-                    {
-                        ExecutorViewModel view = APIClient.GetElement<ExecutorViewModel>(response);
-                        if (view != null)
-                        {
-                            FIOTextBox.Text = view.ExecutorFIO;
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception(APIClient.GetError(response));
-                    }
+                    var implementer = Task.Run(() => APIClient.GetRequestData<ExecutorViewModel>("api/Executor/Get/" + id.Value)).Result;
+                    FIOTextBox.Text = implementer.ExecutorFIO;
                 }
                 catch (Exception ex)
                 {
+                    while (ex.InnerException != null)
+                    {
+                        ex = ex.InnerException;
+                    }
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -52,44 +44,40 @@ namespace BarView
                 MessageBox.Show("Заполните ФИО", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            try
+            string fio = FIOTextBox.Text;
+            Task task;
+            if (id.HasValue)
             {
-                Task<HttpResponseMessage> response;
-                if (id.HasValue)
+                task = Task.Run(() => APIClient.PostRequestData("api/Executor/UpdElement", new ExecutorBindModel
                 {
-                    response = APIClient.PostRequest("api/Executor/UpdElement", new ExecutorBindModel
-                    {
-                        ID = id.Value,
-                        ExecutorFIO = FIOTextBox.Text
-                    });
-                }
-                else
-                {
-                    response = APIClient.PostRequest("api/Executor/UpdElement", new ExecutorBindModel
-                    {
-                        ExecutorFIO = FIOTextBox.Text
-                    });
-                }
-                if (response.Result.IsSuccessStatusCode)
-                {
-                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
-                else
-                {
-                    throw new Exception(APIClient.GetError(response));
-                }
+                    ID = id.Value,
+                    ExecutorFIO = FIOTextBox.Text
+                }));
             }
-            catch (Exception ex)
+            else
             {
+                task = Task.Run(() => APIClient.PostRequestData("api/Executor/UpdElement", new ExecutorBindModel
+                {
+                    ExecutorFIO = FIOTextBox.Text
+                }));
+            }
+            task.ContinueWith((prevTask) => MessageBox.Show("Сохранение прошло успешно. Обновите список", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information),
+               TaskContinuationOptions.OnlyOnRanToCompletion);
+            task.ContinueWith((prevTask) =>
+            {
+                var ex = (Exception)prevTask.Exception;
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                }
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }, TaskContinuationOptions.OnlyOnFaulted);
+            Close();
         }
+
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
             Close();
         }
     }

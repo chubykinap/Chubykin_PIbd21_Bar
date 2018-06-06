@@ -2,6 +2,7 @@
 using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BarView
@@ -26,25 +27,21 @@ namespace BarView
                     MessageBox.Show("Не указан заказ", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Close();
                 }
-                var response = APIClient.GetRequest("api/Executor/GetList");
-                if (response.Result.IsSuccessStatusCode)
+                List<ExecutorViewModel> listI = Task.Run(() => APIClient.GetRequestData<List<ExecutorViewModel>>("api/Executor/GetList")).Result;
+                if (listI != null)
                 {
-                    List<ExecutorViewModel> listI = APIClient.GetElement<List<ExecutorViewModel>>(response);
-                    if (listI != null)
-                    {
-                        ExecutorCB.DisplayMember = "ExecutorFIO";
-                        ExecutorCB.ValueMember = "ID";
-                        ExecutorCB.DataSource = listI;
-                        ExecutorCB.SelectedItem = null;
-                    }
-                }
-                else
-                {
-                    throw new Exception(APIClient.GetError(response));
+                    ExecutorCB.DisplayMember = "ExecutorFIO";
+                    ExecutorCB.ValueMember = "ID";
+                    ExecutorCB.DataSource = listI;
+                    ExecutorCB.SelectedItem = null;
                 }
             }
             catch (Exception ex)
             {
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                }
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -58,31 +55,37 @@ namespace BarView
             }
             try
             {
-                var response = APIClient.PostRequest("api/Main/TakeOrderInWork", new OrderBindModel
+                int implementerId = Convert.ToInt32(ExecutorCB.SelectedValue);
+                Task task = Task.Run(() => APIClient.PostRequestData("api/Main/TakeOrderInWork", new OrderBindModel
                 {
                     ID = id.Value,
                     ExecutorID = Convert.ToInt32(ExecutorCB.SelectedValue)
-                });
-                if (response.Result.IsSuccessStatusCode)
+                }));
+                task.ContinueWith((prevTask) => MessageBox.Show("Заказ передан в работу. Обновите список", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information),
+                    TaskContinuationOptions.OnlyOnRanToCompletion);
+                task.ContinueWith((prevTask) =>
                 {
-                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
-                else
-                {
-                    throw new Exception(APIClient.GetError(response));
-                }
+                    var ex = (Exception)prevTask.Exception;
+                    while (ex.InnerException != null)
+                    {
+                        ex = ex.InnerException;
+                    }
+                    MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }, TaskContinuationOptions.OnlyOnFaulted);
+                Close();
             }
             catch (Exception ex)
             {
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                }
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
             Close();
         }
     }
