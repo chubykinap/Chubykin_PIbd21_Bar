@@ -77,6 +77,7 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.6\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -161,6 +162,7 @@
     <Compile Include="ExecutorsForm.Designer.cs">
       <DependentUpon>ExecutorsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="HttpErrorMessage.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -203,7 +205,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Report.rdlc" />
+    <EmbeddedResource Include="Report.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\BarService.ViewModel.CustomerOrderViewModel.datasource" />
     <None Include="Properties\Settings.settings">

@@ -1,12 +1,15 @@
-﻿using BarService.ViewModel;
+﻿using BarService.Interfaces;
+using BarService.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BarView
 {
     public partial class AddElementForm : Form
     {
+        private readonly IElement service;
         private ElementRequirementsViewModel model;
         public ElementRequirementsViewModel Model { set { model = value; } get { return model; } }
 
@@ -15,25 +18,21 @@ namespace BarView
             InitializeComponent();
         }
 
-        private void AddComponentForm_Load(object sender, EventArgs e)
+        private void AddElementForm_Load(object sender, EventArgs e)
         {
             try
             {
-                var response = APIClient.GetRequest("api/Element/GetList");
-                if (response.Result.IsSuccessStatusCode)
-                {
-                    comboBox1.DisplayMember = "ElementName";
-                    comboBox1.ValueMember = "ID";
-                    comboBox1.DataSource = APIClient.GetElement<List<ElementViewModel>>(response);
-                    comboBox1.SelectedItem = null;
-                }
-                else
-                {
-                    throw new Exception(APIClient.GetError(response));
-                }
+                comboBox1.DisplayMember = "ElementName";
+                comboBox1.ValueMember = "ID";
+                comboBox1.DataSource = Task.Run(() => APIClient.GetRequestData<List<ElementViewModel>>("api/Element/GetList")).Result;
+                comboBox1.SelectedItem = null;
             }
             catch (Exception ex)
             {
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                }
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             if (model != null)

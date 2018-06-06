@@ -1,7 +1,6 @@
 ﻿using BarService.BindingModels;
 using BarService.ViewModel;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -23,19 +22,15 @@ namespace BarView
             {
                 try
                 {
-                    var response = APIClient.GetRequest("api/Customer/Get/" + id.Value);
-                    if (response.Result.IsSuccessStatusCode)
-                    {
-                        var Customer = APIClient.GetElement<CustomerViewModel>(response);
-                        FIO.Text = Customer.CustomerFIO;
-                    }
-                    else
-                    {
-                        throw new Exception(APIClient.GetError(response));
-                    }
+                    var client = Task.Run(() => APIClient.GetRequestData<CustomerViewModel>("api/Customer/Get/" + id.Value)).Result;
+                    FIO.Text = client.CustomerFIO;
                 }
                 catch (Exception ex)
                 {
+                    while (ex.InnerException != null)
+                    {
+                        ex = ex.InnerException;
+                    }
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
@@ -46,46 +41,41 @@ namespace BarView
             if (string.IsNullOrEmpty(FIO.Text))
             {
                 MessageBox.Show("Введите ФИО", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
             }
-            try
+            string fio = FIO.Text;
+            Task task;
+            if (id.HasValue)
             {
-                Task<HttpResponseMessage> response;
-                if (id.HasValue)
+                task = Task.Run(() => APIClient.PostRequestData("api/Customer/UpdElement", new CustomerBindModel
                 {
-                    response = APIClient.PostRequest("api/Customer/UpdElement", new CustomerBindModel
-                    {
-                        ID = id.Value,
-                        CustomerFIO = FIO.Text
-                    });
-                }
-                else
-                {
-                    response = APIClient.PostRequest("api/Customer/AddElement", new CustomerBindModel
-                    {
-                        CustomerFIO = FIO.Text
-                    });
-                }
-                if (response.Result.IsSuccessStatusCode)
-                {
-                    MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
-                else
-                {
-                    throw new Exception(APIClient.GetError(response));
-                }
+                    ID = id.Value,
+                    CustomerFIO = fio
+                }));
             }
-            catch (Exception ex)
+            else
             {
+                task = Task.Run(() => APIClient.PostRequestData("api/Customer/AddElement", new CustomerBindModel
+                {
+                    CustomerFIO = fio
+                }));
+            }
+            task.ContinueWith((prevTask) => MessageBox.Show("Сохранение прошло успешно. Обновите список", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information),
+                TaskContinuationOptions.OnlyOnRanToCompletion);
+            task.ContinueWith((prevTask) =>
+            {
+                var ex = (Exception)prevTask.Exception;
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                }
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }, TaskContinuationOptions.OnlyOnFaulted);
+
+            Close();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            DialogResult = DialogResult.Cancel;
             Close();
         }
     }

@@ -3,6 +3,7 @@ using BarService.ViewModel;
 using Microsoft.Reporting.WinForms;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BarView
@@ -16,7 +17,7 @@ namespace BarView
 
         private void CustomerOrdersForm_Load(object sender, System.EventArgs e)
         {
-            this.reportViewer1.RefreshReport();
+            reportViewer1.RefreshReport();
         }
 
         private void Make_Click(object sender, System.EventArgs e)
@@ -32,26 +33,22 @@ namespace BarView
                                             "c " + dateTimePicker1.Value.ToShortDateString() +
                                             " по " + dateTimePicker2.Value.ToShortDateString());
                 reportViewer1.LocalReport.SetParameters(parameter);
-
-                var response = APIClient.PostRequest("api/Report/GetCustomerOrders", new ReportBindModel
-                {
-                    DateFrom = dateTimePicker1.Value,
-                    DateTo = dateTimePicker2.Value
-                });
-                if (response.Result.IsSuccessStatusCode)
-                {
-                    var dataSource = APIClient.GetElement<List<CustomerOrderViewModel>>(response);
-                    ReportDataSource source = new ReportDataSource("DataSetOrders", dataSource);
-                    reportViewer1.LocalReport.DataSources.Add(source);
-                }
-                else
-                {
-                    throw new Exception(APIClient.GetError(response));
-                }
+                var dataSource = Task.Run(() => APIClient.PostRequestData<ReportBindModel, List<CustomerOrderViewModel>>("api/Report/GetCustomerOrders",
+                    new ReportBindModel
+                    {
+                        DateFrom = dateTimePicker1.Value,
+                        DateTo = dateTimePicker2.Value
+                    })).Result;
+                ReportDataSource source = new ReportDataSource("DataSetOrders", dataSource);
+                reportViewer1.LocalReport.DataSources.Add(source);
                 reportViewer1.RefreshReport();
             }
             catch (Exception ex)
             {
+                while (ex.InnerException != null)
+                {
+                    ex = ex.InnerException;
+                }
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -69,27 +66,26 @@ namespace BarView
             };
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                try
+                string fileName = sfd.FileName;
+                Task task = Task.Run(() => APIClient.PostRequestData("api/Report/SaveCustomerOrders", new ReportBindModel
                 {
-                    var response = APIClient.PostRequest("api/Report/SaveCustomerOrders", new ReportBindModel
-                    {
-                        FileName = sfd.FileName,
-                        DateFrom = dateTimePicker1.Value,
-                        DateTo = dateTimePicker2.Value
-                    });
-                    if (response.Result.IsSuccessStatusCode)
-                    {
-                        MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                    else
-                    {
-                        throw new Exception(APIClient.GetError(response));
-                    }
-                }
-                catch (Exception ex)
+                    FileName = fileName,
+                    DateFrom = dateTimePicker1.Value,
+                    DateTo = dateTimePicker2.Value
+                }));
+
+                task.ContinueWith((prevTask) => MessageBox.Show("Список заказов сохранен", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information),
+                TaskContinuationOptions.OnlyOnRanToCompletion);
+
+                task.ContinueWith((prevTask) =>
                 {
+                    var ex = (Exception)prevTask.Exception;
+                    while (ex.InnerException != null)
+                    {
+                        ex = ex.InnerException;
+                    }
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                }, TaskContinuationOptions.OnlyOnFaulted);
             }
         }
     }
