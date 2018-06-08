@@ -131,7 +131,6 @@ namespace BarService.BDImplementation
                     element.CocktailName = model.CocktailName;
                     element.Price = model.Price;
                     context.SaveChanges();
-
                     var compIDs = model.ElementRequirements.Select(rec => rec.ElementID).Distinct();
                     var updateElements = context.ElementRequirements
                                                     .Where(rec => rec.CocktailID == model.ID &&

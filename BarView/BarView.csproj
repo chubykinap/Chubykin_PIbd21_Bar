@@ -163,6 +163,13 @@
       <DependentUpon>ExecutorsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="HttpErrorMessage.cs" />
+    <Compile Include="MailClient.cs" />
+    <Compile Include="MailForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MailForm.Designer.cs">
+      <DependentUpon>MailForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -196,6 +203,9 @@
     <Compile Include="TakeOrderForm.Designer.cs">
       <DependentUpon>TakeOrderForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

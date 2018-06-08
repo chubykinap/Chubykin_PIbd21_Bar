@@ -3,7 +3,7 @@ namespace BarService.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class FirstMigration : DbMigration
+    public partial class FullMigration : DbMigration
     {
         public override void Up()
         {
@@ -93,8 +93,25 @@ namespace BarService.Migrations
                     {
                         ID = c.Int(nullable: false, identity: true),
                         CustomerFIO = c.String(nullable: false),
+                        Mail = c.String(),
                     })
                 .PrimaryKey(t => t.ID);
+            
+            CreateTable(
+                "dbo.MessageInfoes",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        MessageId = c.String(),
+                        FromMailAddress = c.String(),
+                        Subject = c.String(),
+                        Body = c.String(),
+                        DateDelivery = c.DateTime(nullable: false),
+                        CustomerID = c.Int(),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Customers", t => t.CustomerID)
+                .Index(t => t.CustomerID);
             
             CreateTable(
                 "dbo.Executors",
@@ -111,11 +128,13 @@ namespace BarService.Migrations
         {
             DropForeignKey("dbo.Orders", "ExecutorID", "dbo.Executors");
             DropForeignKey("dbo.Orders", "CustomerID", "dbo.Customers");
+            DropForeignKey("dbo.MessageInfoes", "CustomerID", "dbo.Customers");
             DropForeignKey("dbo.Orders", "CocktailID", "dbo.Cocktails");
             DropForeignKey("dbo.ElementStorages", "StorageID", "dbo.Storages");
             DropForeignKey("dbo.ElementStorages", "ElementID", "dbo.Elements");
             DropForeignKey("dbo.ElementRequirements", "ElementID", "dbo.Elements");
             DropForeignKey("dbo.ElementRequirements", "CocktailID", "dbo.Cocktails");
+            DropIndex("dbo.MessageInfoes", new[] { "CustomerID" });
             DropIndex("dbo.Orders", new[] { "ExecutorID" });
             DropIndex("dbo.Orders", new[] { "CocktailID" });
             DropIndex("dbo.Orders", new[] { "CustomerID" });
@@ -124,6 +143,7 @@ namespace BarService.Migrations
             DropIndex("dbo.ElementRequirements", new[] { "ElementID" });
             DropIndex("dbo.ElementRequirements", new[] { "CocktailID" });
             DropTable("dbo.Executors");
+            DropTable("dbo.MessageInfoes");
             DropTable("dbo.Customers");
             DropTable("dbo.Orders");
             DropTable("dbo.Storages");

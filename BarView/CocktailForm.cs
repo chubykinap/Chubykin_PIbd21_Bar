@@ -157,17 +157,17 @@ namespace BarView
                 task = Task.Run(() => APIClient.PostRequestData("api/Cocktail/UpdElement", new CocktailBindModel
                 {
                     ID = id.Value,
-                    CocktailName = NameTextBox.Text,
-                    Price = Convert.ToInt32(PriceTextBox.Text),
+                    CocktailName = name,
+                    Price = price,
                     ElementRequirements = productComponentBM
                 }));
             }
             else
             {
-                task = Task.Run(() => APIClient.PostRequestData("api/Cocktail/UpdElement", new CocktailBindModel
+                task = Task.Run(() => APIClient.PostRequestData("api/Cocktail/AddElement", new CocktailBindModel
                 {
-                    CocktailName = NameTextBox.Text,
-                    Price = Convert.ToInt32(PriceTextBox.Text),
+                    CocktailName = name,
+                    Price = price,
                     ElementRequirements = productComponentBM
                 }));
             }

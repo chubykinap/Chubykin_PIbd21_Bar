@@ -55,6 +55,7 @@
     <Compile Include="ElementRequirement.cs" />
     <Compile Include="ElementStorage.cs" />
     <Compile Include="Executor.cs" />
+    <Compile Include="MessageInfo.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage.cs" />
