@@ -11,7 +11,12 @@ namespace BarModel
         [Required]
         public string CustomerFIO { set; get; }
 
+        public string Mail { set; get; }
+
         [ForeignKey("CustomerID")]
         public virtual List<Order> Orders { get; set; }
+
+        [ForeignKey("CustomerID")]
+        public virtual List<MessageInfo> MessageInfos { get; set; }
     }
 }

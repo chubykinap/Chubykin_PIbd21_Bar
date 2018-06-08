@@ -23,7 +23,8 @@ namespace BarService.BDImplementation
                 .Select(rec => new CustomerViewModel
                 {
                     ID = rec.ID,
-                    CustomerFIO = rec.CustomerFIO
+                    CustomerFIO = rec.CustomerFIO,
+                    Mail = rec.Mail
                 })
                 .ToList();
             return result;
@@ -37,7 +38,18 @@ namespace BarService.BDImplementation
                 return new CustomerViewModel
                 {
                     ID = element.ID,
-                    CustomerFIO = element.CustomerFIO
+                    CustomerFIO = element.CustomerFIO,
+                    Mail = element.Mail,
+                    Messages = context.MessageInfos
+                           .Where(recM => recM.CustomerID == element.ID)
+                            .Select(recM => new MessageInfoViewModel
+                            {
+                                MessageId = recM.MessageId,
+                                DateDelivery = recM.DateDelivery,
+                                Subject = recM.Subject,
+                                Body = recM.Body
+                            })
+                            .ToList()
                 };
             }
             throw new Exception("Элемент не найден");
@@ -52,7 +64,8 @@ namespace BarService.BDImplementation
             }
             context.Customers.Add(new Customer
             {
-                CustomerFIO = model.CustomerFIO
+                CustomerFIO = model.CustomerFIO,
+                Mail = model.Mail
             });
             context.SaveChanges();
         }
@@ -71,6 +84,7 @@ namespace BarService.BDImplementation
                 throw new Exception("Элемент не найден");
             }
             element.CustomerFIO = model.CustomerFIO;
+            element.Mail = model.Mail;
             context.SaveChanges();
         }
 

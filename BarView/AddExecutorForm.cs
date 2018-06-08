@@ -51,14 +51,14 @@ namespace BarView
                 task = Task.Run(() => APIClient.PostRequestData("api/Executor/UpdElement", new ExecutorBindModel
                 {
                     ID = id.Value,
-                    ExecutorFIO = FIOTextBox.Text
+                    ExecutorFIO = fio
                 }));
             }
             else
             {
-                task = Task.Run(() => APIClient.PostRequestData("api/Executor/UpdElement", new ExecutorBindModel
+                task = Task.Run(() => APIClient.PostRequestData("api/Executor/AddElement", new ExecutorBindModel
                 {
-                    ExecutorFIO = FIOTextBox.Text
+                    ExecutorFIO = fio
                 }));
             }
             task.ContinueWith((prevTask) => MessageBox.Show("Сохранение прошло успешно. Обновите список", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information),

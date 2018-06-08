@@ -54,6 +54,7 @@ namespace BarRestApi
             container.RegisterType<IStorage, StorageBD>(new HierarchicalLifetimeManager());
             container.RegisterType<IMainService, MainBD>(new HierarchicalLifetimeManager());
             container.RegisterType<IReportService, ReportBD>(new HierarchicalLifetimeManager());
+            container.RegisterType<IMessageInfo, MessageInfoBD>(new HierarchicalLifetimeManager());
         }
     }
 }

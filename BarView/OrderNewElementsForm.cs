@@ -65,7 +65,7 @@ namespace BarView
                 int componentId = Convert.ToInt32(ElementTB.SelectedValue);
                 int stockId = Convert.ToInt32(StorageTB.SelectedValue);
                 int count = Convert.ToInt32(Count.Text);
-                Task task = Task.Run(() => APIClient.PostRequestData("api/Main/PutComponentOnStock", new ElementStorageBindModel
+                Task task = Task.Run(() => APIClient.PostRequestData("api/Main/PutElementOnStorage", new ElementStorageBindModel
                 {
                     ElementID = componentId,
                     StorageID = stockId,

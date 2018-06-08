@@ -57,14 +57,14 @@ namespace BarView
                 task = Task.Run(() => APIClient.PostRequestData("api/Storage/UpdElement", new StorageBindModel
                 {
                     ID = id.Value,
-                    StorageName = textBoxName.Text
+                    StorageName = name
                 }));
             }
             else
             {
-                task = Task.Run(() => APIClient.PostRequestData("api/Storage/UpdElement", new StorageBindModel
+                task = Task.Run(() => APIClient.PostRequestData("api/Storage/AddElement", new StorageBindModel
                 {
-                    StorageName = textBoxName.Text
+                    StorageName = name
                 }));
             }
             task.ContinueWith((prevTask) => MessageBox.Show("Сохранение прошло успешно. Обновите список", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information),
