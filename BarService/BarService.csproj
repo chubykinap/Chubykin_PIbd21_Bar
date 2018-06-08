@@ -52,6 +52,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
@@ -68,6 +69,7 @@
     <Compile Include="BDImplementation\ElementBD.cs" />
     <Compile Include="BDImplementation\ExecutorBD.cs" />
     <Compile Include="BDImplementation\MainBD.cs" />
+    <Compile Include="BDImplementation\MessageInfoBD.cs" />
     <Compile Include="BDImplementation\ReportBD.cs" />
     <Compile Include="BDImplementation\StorageBD.cs" />
     <Compile Include="BindingModels\CocktailBindModel.cs" />
@@ -76,6 +78,7 @@
     <Compile Include="BindingModels\ElementRequirementBindModel.cs" />
     <Compile Include="BindingModels\ElementStorageBindModel.cs" />
     <Compile Include="BindingModels\ExecutorBindModel.cs" />
+    <Compile Include="BindingModels\MessageInfoBindModel.cs" />
     <Compile Include="BindingModels\OrderBindModel.cs" />
     <Compile Include="BindingModels\ReportBindModel.cs" />
     <Compile Include="BindingModels\StorageBindModel.cs" />
@@ -85,11 +88,12 @@
     <Compile Include="Interfaces\IElement.cs" />
     <Compile Include="Interfaces\IExecutor.cs" />
     <Compile Include="Interfaces\IMainService.cs" />
+    <Compile Include="Interfaces\IMessageInfo.cs" />
     <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Interfaces\IStorage.cs" />
-    <Compile Include="Migrations\201805220948204_FirstMigration.cs" />
-    <Compile Include="Migrations\201805220948204_FirstMigration.Designer.cs">
-      <DependentUpon>201805220948204_FirstMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201806080841473_FullMigration.cs" />
+    <Compile Include="Migrations\201806080841473_FullMigration.Designer.cs">
+      <DependentUpon>201806080841473_FullMigration.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -111,6 +115,7 @@
     <Compile Include="ViewModel\ElementStorageViewModel.cs" />
     <Compile Include="ViewModel\ElementViewModel.cs" />
     <Compile Include="ViewModel\ExecutorViewModel.cs" />
+    <Compile Include="ViewModel\MessageInfoViewModel.cs" />
     <Compile Include="ViewModel\OrderViewModel.cs" />
     <Compile Include="ViewModel\StorageLoadViewModel.cs" />
     <Compile Include="ViewModel\StorageViewModel.cs" />
@@ -127,8 +132,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201805220948204_FirstMigration.resx">
-      <DependentUpon>201805220948204_FirstMigration.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806080841473_FullMigration.resx">
+      <DependentUpon>201806080841473_FullMigration.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

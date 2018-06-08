@@ -5,10 +5,9 @@ using System.Data.Entity;
 
 namespace BarService
 {
-    [Table("BarDatabase")]
     public class BarDBContext : DbContext
     {
-        public BarDBContext()
+        public BarDBContext() : base("NewBarDatabase")
         {
             Configuration.ProxyCreationEnabled = false;
             Configuration.LazyLoadingEnabled = false;
@@ -30,6 +29,8 @@ namespace BarService
         public virtual DbSet<Storage> Storages { get; set; }
 
         public virtual DbSet<ElementStorage> ElementStorages { get; set; }
+
+        public virtual DbSet<MessageInfo> MessageInfos { get; set; }
 
         public override int SaveChanges()
         {
