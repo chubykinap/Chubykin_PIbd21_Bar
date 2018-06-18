@@ -1,6 +1,7 @@
 ﻿using BarService.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BarService.BindingModels;
 using BarService.ViewModel;
 using BarModel;
@@ -16,90 +17,71 @@ namespace BarService.ServicesList
             source = DataListSingleton.GetInstance();
         }
 
-        public List<ExecutorViewModel> GetList()
-        {
-            List<ExecutorViewModel> result = new List<ExecutorViewModel>();
-            for (int i = 0; i < source.Executors.Count; ++i)
-            {
-                result.Add(new ExecutorViewModel
-                {
-                    ID = source.Executors[i].ID,
-                    ExecutorFIO = source.Executors[i].ExecutorFIO
-                });
-            }
-            return result;
-        }
-
-        public ExecutorViewModel GetElement(int ID)
-        {
-            for (int i = 0; i < source.Executors.Count; ++i)
-            {
-                if (source.Executors[i].ID == ID)
-                {
-                    return new ExecutorViewModel
-                    {
-                        ID = source.Executors[i].ID,
-                        ExecutorFIO = source.Executors[i].ExecutorFIO
-                    };
-                }
-            }
-            throw new Exception("Элемент не найден");
-        }
-
         public void AddElement(ExecutorBindModel model)
         {
-            int maxID = 0;
-            for (int i = 0; i < source.Executors.Count; ++i)
+            Executor elem = source.Executors.FirstOrDefault(executor => executor.ExecutorFIO == model.ExecutorFIO);
+            if (elem != null)
             {
-                if (source.Executors[i].ID > maxID)
-                {
-                    maxID = source.Executors[i].ID;
-                }
-                if (source.Executors[i].ExecutorFIO == model.ExecutorFIO)
-                {
-                    throw new Exception("Уже есть сотрудник с таким ФИО");
-                }
+                throw new Exception("Такой исполнитель уже есть");
             }
+            int maxId = source.Executors.Count > 0 ? source.Executors.Max(executor => executor.ID) : 0;
             source.Executors.Add(new Executor
             {
-                ID = maxID + 1,
+                ID = maxId + 1,
                 ExecutorFIO = model.ExecutorFIO
             });
         }
 
-        public void UpdElement(ExecutorBindModel model)
+        public void DelElement(int id)
         {
-            int index = -1;
-            for (int i = 0; i < source.Executors.Count; ++i)
+            Executor elem = source.Executors.FirstOrDefault(executor => executor.ID == id);
+            if (elem != null)
             {
-                if (source.Executors[i].ID == model.ID)
-                {
-                    index = i;
-                }
-                if (source.Executors[i].ExecutorFIO == model.ExecutorFIO &&
-                    source.Executors[i].ID != model.ID)
-                {
-                    throw new Exception("Уже есть сотрудник с таким ФИО");
-                }
+                source.Executors.Remove(elem);
             }
-            if (index == -1)
+            else
             {
                 throw new Exception("Элемент не найден");
             }
-            source.Executors[index].ExecutorFIO = model.ExecutorFIO;
         }
 
-        public void DelElement(int ID)
+        public ExecutorViewModel GetElement(int id)
         {
-            for (int i = 0; i < source.Executors.Count; ++i)
+            Executor elem = source.Executors.FirstOrDefault(executor => executor.ID == id);
+            if (elem != null)
             {
-                if (source.Executors[i].ID == ID)
+                return new ExecutorViewModel
                 {
-                    source.Executors.RemoveAt(i);
-                    return;
-                }
+                    ID = elem.ID,
+                    ExecutorFIO = elem.ExecutorFIO
+                };
             }
             throw new Exception("Элемент не найден");
+        }
+
+        public List<ExecutorViewModel> GetList()
+        {
+            List<ExecutorViewModel> result = source.Executors.Select(rec => new ExecutorViewModel
+            {
+                ID = rec.ID,
+                ExecutorFIO = rec.ExecutorFIO
+            }).ToList();
+            return result;
+        }
+
+        public void UpdElement(ExecutorBindModel model)
+        {
+            Executor elem = source.Executors.FirstOrDefault(executor => executor.ExecutorFIO == model.ExecutorFIO && executor.ID == model.ID);
+            if (elem != null)
+            {
+                throw new Exception("Уже есть сотрудник с таким ФИО");
+            }
+            elem = source.Executors.FirstOrDefault(executor => executor.ID == model.ID);
+            if (elem == null)
+            {
+                throw new Exception("Элемент не найден");
+            }
+            elem.ExecutorFIO = model.ExecutorFIO;
         }
     }
 }

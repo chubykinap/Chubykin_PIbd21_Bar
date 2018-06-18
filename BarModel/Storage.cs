@@ -2,7 +2,7 @@
 {
     public class Storage
     {
-        public int Id { get; set; }
+        public int ID { get; set; }
         public string StorageName { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BarService.BindingModels;
 using BarService.Interfaces;
 using BarService.ViewModel;
@@ -16,73 +17,12 @@ namespace BarService.ServicesList
             source = DataListSingleton.GetInstance();
         }
 
-        public List<OrderViewModel> GetList()
-        {
-            List<OrderViewModel> result = new List<OrderViewModel>();
-            for (int i = 0; i < source.Orders.Count; ++i)
-            {
-                string CustomerFIO = string.Empty;
-                for (int j = 0; j < source.Customers.Count; ++j)
-                {
-                    if (source.Customers[j].ID == source.Orders[i].CustomerID)
-                    {
-                        CustomerFIO = source.Customers[j].CustomerFIO;
-                        break;
-                    }
-                }
-                string CocktailName = string.Empty;
-                for (int j = 0; j < source.Cocktails.Count; ++j)
-                {
-                    if (source.Cocktails[j].ID == source.Orders[i].CocktailID)
-                    {
-                        CocktailName = source.Cocktails[j].CocktailName;
-                        break;
-                    }
-                }
-                string ExecutorFIO = string.Empty;
-                if (source.Orders[i].ExecutorID.HasValue)
-                {
-                    for (int j = 0; j < source.Executors.Count; ++j)
-                    {
-                        if (source.Executors[j].ID == source.Orders[i].ExecutorID.Value)
-                        {
-                            ExecutorFIO = source.Executors[j].ExecutorFIO;
-                            break;
-                        }
-                    }
-                }
-                result.Add(new OrderViewModel
-                {
-                    ID = source.Orders[i].ID,
-                    CustomerID = source.Orders[i].CustomerID,
-                    CustomerFIO = CustomerFIO,
-                    CocktailID = source.Orders[i].CocktailID,
-                    CocktailName = CocktailName,
-                    ExecutorID = source.Orders[i].ExecutorID,
-                    ExecutorName = ExecutorFIO,
-                    Count = source.Orders[i].Count,
-                    Sum = source.Orders[i].Sum,
-                    DateCreate = source.Orders[i].DateCreate.ToLongDateString(),
-                    DateImplement = source.Orders[i].DateImplement?.ToLongDateString(),
-                    Status = source.Orders[i].Status.ToString()
-                });
-            }
-            return result;
-        }
-
         public void CreateOrder(OrderBindModel model)
         {
-            int maxID = 0;
-            for (int i = 0; i < source.Orders.Count; ++i)
-            {
-                if (source.Orders[i].ID > maxID)
-                {
-                    maxID = source.Customers[i].ID;
-                }
-            }
+            int maxId = source.Orders.Count > 0 ? source.Orders.Max(order => order.ID) : 0;
             source.Orders.Add(new Order
             {
-                ID = maxID + 1,
+                ID = maxId + 1,
                 CustomerID = model.CustomerID,
                 CocktailID = model.CocktailID,
                 DateCreate = DateTime.Now,
@@ -92,133 +32,104 @@ namespace BarService.ServicesList
             });
         }
 
-        public void TakeOrderInWork(OrderBindModel model)
+        public void FinishOrder(int id)
         {
-            int index = -1;
-            for (int i = 0; i < source.Orders.Count; ++i)
-            {
-                if (source.Orders[i].ID == model.ID)
-                {
-                    index = i;
-                    break;
-                }
-            }
-            if (index == -1)
+            Order elem = source.Orders.FirstOrDefault(order => order.ID == id);
+            if (elem == null)
             {
                 throw new Exception("Элемент не найден");
             }
-            for (int i = 0; i < source.ElementRequirements.Count; ++i)
-            {
-                if (source.ElementRequirements[i].CocktailID == source.Orders[index].CocktailID)
-                {
-                    int countOnStocks = 0;
-                    for (int j = 0; j < source.ElementStorages.Count; ++j)
-                    {
-                        if (source.ElementStorages[j].ElementID == source.ElementRequirements[i].ElementID)
-                        {
-                            countOnStocks += source.ElementStorages[j].Count;
-                        }
-                    }
-                    if (countOnStocks < source.ElementRequirements[i].Count * source.Orders[index].Count)
-                    {
-                        for (int j = 0; j < source.Elements.Count; ++j)
-                        {
-                            if (source.Elements[j].ID == source.ElementRequirements[i].ElementID)
-                            {
-                                throw new Exception("Не достаточно компонента " + source.Elements[j].ElementName +
-                                    " требуется " + source.ElementRequirements[i].Count + ", в наличии " + countOnStocks);
-                            }
-                        }
-                    }
-                }
-            }
-            for (int i = 0; i < source.ElementRequirements.Count; ++i)
-            {
-                if (source.ElementRequirements[i].CocktailID == source.Orders[index].CocktailID)
-                {
-                    int countOnStocks = source.ElementRequirements[i].Count * source.Orders[index].Count;
-                    for (int j = 0; j < source.ElementStorages.Count; ++j)
-                    {
-                        if (source.ElementStorages[j].ElementID == source.ElementRequirements[i].ElementID)
-                        {
-                            if (source.ElementStorages[j].Count >= countOnStocks)
-                            {
-                                source.ElementStorages[j].Count -= countOnStocks;
-                                break;
-                            }
-                            else
-                            {
-                                countOnStocks -= source.ElementStorages[j].Count;
-                                source.ElementStorages[j].Count = 0;
-                            }
-                        }
-                    }
-                }
-            }
-            source.Orders[index].ExecutorID = model.ExecutorID;
-            source.Orders[index].DateImplement = DateTime.Now;
-            source.Orders[index].Status = OrderStatus.Выполняется;
+            elem.Status = OrderStatus.Готов;
         }
 
-        public void FinishOrder(int ID)
+        public List<OrderViewModel> GetList()
         {
-            int index = -1;
-            for (int i = 0; i < source.Orders.Count; ++i)
+            List<OrderViewModel> result = source.Orders.Select(order => new OrderViewModel
             {
-                if (source.Customers[i].ID == ID)
-                {
-                    index = i;
-                    break;
-                }
-            }
-            if (index == -1)
-            {
-                throw new Exception("Элемент не найден");
-            }
-            source.Orders[index].Status = OrderStatus.Готов;
+                ID = order.ID,
+                CustomerID = order.CustomerID,
+                CocktailID = order.CocktailID,
+                ExecutorID = order.ExecutorID,
+                DateCreate = order.DateCreate.ToLongDateString(),
+                DateImplement = order.DateImplement?.ToLongDateString(),
+                Status = order.Status.ToString(),
+                Count = order.Count,
+                Sum = order.Sum,
+                CustomerFIO = source.Customers.FirstOrDefault(orderC => orderC.ID == order.CustomerID)?.CustomerFIO,
+                CocktailName = source.Elements.FirstOrDefault(orderP => orderP.ID == order.CocktailID)?.ElementName,
+                ExecutorName = source.Executors.FirstOrDefault(orderI => orderI.ID == order.ExecutorID)?.ExecutorFIO
+            }).ToList();
+            return result;
         }
 
-        public void PayOrder(int ID)
+        public void PayOrder(int id)
         {
-            int index = -1;
-            for (int i = 0; i < source.Orders.Count; ++i)
-            {
-                if (source.Customers[i].ID == ID)
-                {
-                    index = i;
-                    break;
-                }
-            }
-            if (index == -1)
+            Order elem = source.Orders.FirstOrDefault(order => order.ID == id);
+            if (elem == null)
             {
                 throw new Exception("Элемент не найден");
             }
-            source.Orders[index].Status = OrderStatus.Оплачен;
+            elem.Status = OrderStatus.Оплачен;
         }
 
         public void PutElementOnStorage(ElementStorageBindModel model)
         {
-            int maxID = 0;
-            for (int i = 0; i < source.ElementStorages.Count; ++i)
+            ElementStorage element = source.ElementStorages.FirstOrDefault(order => order.StorageID == model.StorageID && order.ElementID == model.ElementID);
+            if (element != null)
             {
-                if (source.ElementStorages[i].StorageID == model.StorageID &&
-                    source.ElementStorages[i].ElementID == model.ElementID)
+                element.Count += model.Count;
+            }
+            else
+            {
+                int maxId = source.ElementStorages.Count > 0 ? source.ElementStorages.Max(order => order.ID) : 0;
+                source.ElementStorages.Add(new ElementStorage
                 {
-                    source.ElementStorages[i].Count += model.Count;
-                    return;
-                }
-                if (source.ElementStorages[i].ID > maxID)
+                    StorageID = model.StorageID,
+                    ElementID = model.ElementID,
+                    Count = model.Count
+                });
+            }
+        }
+
+        public void TakeOrderInWork(OrderBindModel model)
+        {
+            Order element = source.Orders.FirstOrDefault(order => order.ID == model.ID);
+            if (element == null)
+            {
+                throw new Exception("Элемент не найден");
+            }
+            var CocktailElements = source.ElementRequirements.Where(order => order.ElementID == element.CocktailID);
+            foreach (var CocktailElement in CocktailElements)
+            {
+                int countOnStorages = source.ElementStorages.Where(order => order.ElementID == CocktailElement.ElementID).Sum(order => order.Count);
+                if (countOnStorages < CocktailElement.Count * element.Count)
                 {
-                    maxID = source.ElementStorages[i].ID;
+                    var ElementName = source.Elements.FirstOrDefault(order => order.ID == CocktailElement.ElementID);
+                    throw new Exception("Не достаточно компонента " + ElementName?.ElementName +
+                        " требуется " + CocktailElement.Count * element.Count + ", в наличии " + countOnStorages);
                 }
             }
-            source.ElementStorages.Add(new ElementStorage
+            foreach (var CocktailElement in CocktailElements)
             {
-                ID = ++maxID,
-                StorageID = model.StorageID,
-                ElementID = model.ElementID,
-                Count = model.Count
-            });
+                int countOnStorages = CocktailElement.Count * element.Count;
+                var StorageElements = source.ElementStorages.Where(order => order.ElementID == CocktailElement.ElementID);
+                foreach (var StorageElement in StorageElements)
+                {
+                    if (StorageElement.Count >= countOnStorages)
+                    {
+                        StorageElement.Count -= countOnStorages;
+                        break;
+                    }
+                    else
+                    {
+                        countOnStorages -= StorageElement.Count;
+                        StorageElement.Count = 0;
+                    }
+                }
+            }
+            element.ExecutorID = model.ExecutorID;
+            element.DateImplement = DateTime.Now;
+            element.Status = OrderStatus.Выполняется;
         }
     }
 }
