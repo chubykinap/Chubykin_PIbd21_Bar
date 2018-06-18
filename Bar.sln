@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarModel", "BarModel\BarModel.csproj", "{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarService", "BarService\BarService.csproj", "{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarView", "BarView\BarView.csproj", "{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4017C3B2-4A3E-434C-BE10-DDDB9B7E1D1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F942CD93-3441-406A-9064-56F3D8E18499}
+	EndGlobalSection
+EndGlobal
