@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarModel", "BarModel\BarMod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarService", "BarService\BarService.csproj", "{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarView", "D:\учеба\Учёба\ООП\2 семестр\Bar_lab10\FabrikaView\BarView.csproj", "{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarView", "BarView\BarView.csproj", "{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F942CD93-3441-406A-9064-56F3D8E18499}
 	EndGlobalSection
 EndGlobal
