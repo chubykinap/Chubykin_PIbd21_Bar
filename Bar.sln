@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarModel", "BarModel\BarMod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarService", "BarService\BarService.csproj", "{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarView", "BarView\BarView.csproj", "{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarView", "BarView\BarView.csproj", "{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
