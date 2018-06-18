@@ -63,6 +63,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\CustomInterfaceAttribute.cs" />
+    <Compile Include="Attributes\CustomMethodAttribute.cs" />
     <Compile Include="BarDBContext.cs" />
     <Compile Include="BDImplementation\CocktailBD.cs" />
     <Compile Include="BDImplementation\CustomerBD.cs" />
