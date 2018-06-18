@@ -1,5 +1,7 @@
-﻿using BarService.Attributes;
+
+using BarService.Attributes;
 using BarService.BindingModels;
+
 using BarService.ViewModel;
 using System.Collections.Generic;
 
