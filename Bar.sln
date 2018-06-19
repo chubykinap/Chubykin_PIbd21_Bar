@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.14
@@ -7,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarModel", "BarModel\BarMod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarService", "BarService\BarService.csproj", "{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarView", "BarView\BarView.csproj", "{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarWebView", "BarWebView\BarWebView.csproj", "{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,15 +22,15 @@ Global
 		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A76C58C0-ACE9-4792-B3B7-E1F75BA1ECEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F942CD93-3441-406A-9064-56F3D8E18499}
+		SolutionGuid = {71FB7247-D1B5-4368-9F2C-BF7D0A4C256A}
 	EndGlobalSection
 EndGlobal
