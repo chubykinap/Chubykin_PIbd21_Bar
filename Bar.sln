@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarModel", "BarModel\BarMod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarService", "BarService\BarService.csproj", "{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarView", "D:\учеба\Учёба\ООП\2 семестр\Bar_lab10\FabrikaView\BarView.csproj", "{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarWebView", "BarWebView\BarWebView.csproj", "{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +23,15 @@ Global
 		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57084DB3-EE23-4CB2-97AF-A0FA54F58B6A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB623E30-EF66-4FBE-B96C-BC3D096D48BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CBC00EC-2402-4C7F-B8E9-B7DB053EFF22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {71FB7247-D1B5-4368-9F2C-BF7D0A4C256A}
 	EndGlobalSection
 EndGlobal
