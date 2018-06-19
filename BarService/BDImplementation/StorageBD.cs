@@ -17,6 +17,11 @@ namespace BarService.BDImplementation
             this.context = context;
         }
 
+        public StorageBD()
+        {
+            this.context = new BarDBContext();
+        }
+
         public List<StorageViewModel> GetList()
         {
             List<StorageViewModel> result = context.Storages

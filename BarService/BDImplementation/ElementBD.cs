@@ -17,6 +17,11 @@ namespace BarService.BDImplementation
             this.context = context;
         }
 
+        public ElementBD()
+        {
+            this.context = new BarDBContext();
+        }
+
         public List<ElementViewModel> GetList()
         {
             List<ElementViewModel> result = context.Elements
