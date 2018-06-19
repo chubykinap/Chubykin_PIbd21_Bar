@@ -17,6 +17,11 @@ namespace BarService.BDImplementation
             this.context = context;
         }
 
+        public ExecutorBD()
+        {
+            this.context = new BarDBContext();
+        }
+
         public List<ExecutorViewModel> GetList()
         {
             List<ExecutorViewModel> result = context.Executors

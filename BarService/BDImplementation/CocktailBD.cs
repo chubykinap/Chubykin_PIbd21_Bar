@@ -17,6 +17,11 @@ namespace BarService.BDImplementation
             this.context = context;
         }
 
+        public CocktailBD()
+        {
+            this.context = new BarDBContext();
+        }
+
         public List<CocktailViewModel> GetList()
         {
             List<CocktailViewModel> result = context.Cocktails
@@ -106,7 +111,6 @@ namespace BarService.BDImplementation
                 catch (Exception)
                 {
                     transaction.Rollback();
-                    throw;
                 }
             }
         }
@@ -180,7 +184,6 @@ namespace BarService.BDImplementation
                 catch (Exception)
                 {
                     transaction.Rollback();
-                    throw;
                 }
             }
         }
@@ -208,7 +211,6 @@ namespace BarService.BDImplementation
                 catch (Exception)
                 {
                     transaction.Rollback();
-                    throw;
                 }
             }
         }

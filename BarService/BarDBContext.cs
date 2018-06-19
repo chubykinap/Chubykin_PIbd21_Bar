@@ -4,7 +4,7 @@ using System.Data.Entity;
 
 namespace BarService
 {
-    [Table("BarDatabase")]
+    [Table("BarWebDatabase")]
     public class BarDBContext : DbContext
     {
         public BarDBContext()

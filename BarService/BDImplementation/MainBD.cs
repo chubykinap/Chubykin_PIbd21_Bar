@@ -19,6 +19,11 @@ namespace BarService.BDImplementation
             this.context = context;
         }
 
+        public MainBD()
+        {
+            this.context = new BarDBContext();
+        }
+
         public List<OrderViewModel> GetList()
         {
             List<OrderViewModel> result = context.Orders
